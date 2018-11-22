@@ -6,6 +6,7 @@ from .models import *
 
 
 class EventAdmin(admin.ModelAdmin):
+    date_hierarchy = ['event_date']
     list_display = ["heading", "event_date", "event_time"]
 
 
