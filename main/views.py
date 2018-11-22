@@ -174,13 +174,16 @@ class EventDetailGeneric(generics.CreateAPIView):
             try:
                 if request.data:
                     event_id = request.data['event_id']
+                    device_id = request.data['device_id']
                 else:
                     event_id = request.POST.get('event_id', "")
+                    device_id = request.POST.get('device_id', "")
             except Exception:
                 return JsonResponse(dict(status=400, message="Event ID Missing", payload={}))
 
             event = Events.objects.get(id=int(event_id))
             interested = InterestedEvent.objects.filter(event=event)
+            user_interest = InterestedEvent.objects.filter(device_id=device_id)
             response = dict(
                 id=event.id,
                 heading=event.heading,
@@ -191,7 +194,8 @@ class EventDetailGeneric(generics.CreateAPIView):
                 event_address=event.event_address,
                 latitude=event.latitude,
                 longitude=event.longitude,
-                interested_users = interested.count()
+                interested_users=interested.count(),
+                user_interest=1 if len(user_interest) > 0 else 0
             )
             return JsonResponse(dict(status=200,
                                      message="success",

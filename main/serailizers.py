@@ -22,10 +22,11 @@ class EventSearchSerializer(serializers.ModelSerializer):
 
 class EventDetailSerializer(serializers.ModelSerializer):
     event_id = serializers.CharField(required=True, help_text=_("Event ID(Integer)"))
+    device_id = serializers.CharField(required=True, help_text=_("Device_id(Integer)"))
 
     class Meta:
         model = Events
-        fields = ['event_id']
+        fields = ['event_id', "device_id"]
 
 
 class AddEventInterestedSerializer(serializers.ModelSerializer):
