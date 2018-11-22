@@ -471,18 +471,18 @@ class AirPollutionWeekGeneric(generics.CreateAPIView):
                     date = keys.split(" ")[0]
                     pm25 = values[1]
                     pm10 = values[0]
-                    resp.append({"date": date, "pm2.5":pm25, "pm10": pm10})
+                    resp.append({"date": date, "pm2.5":pm25, "pm10": pm10,"color": color_return(pm10)})
                 else:
                     keys1, values1 = keys[0], values[0]
                     date = keys1.split(" ")[0]
                     pm25 = values1[1]
                     pm10 = values1[0]
-                    resp.append({"date": date, "pm2.5": pm25, "pm10": pm10})
+                    resp.append({"date": date, "pm2.5": pm25, "pm10": pm10,"color": color_return(pm10)})
                     key, value = keys[1], values[1]
                     date = key.split(" ")[0]
                     pm25 = value[1]
                     pm10 = value[0]
-                    resp.append({"date": date, "pm2.5": pm25, "pm10": pm10})
+                    resp.append({"date": date, "pm2.5": pm25, "pm10": pm10, "color": color_return(pm10)})
             return JsonResponse(dict(status=200,
                                      message="success",
                                      payload=resp))
