@@ -59,17 +59,17 @@ def blog_data(events):
 def color_return(val):
     val = float(val)
     if 0.0 <= val < 51.0:
-        return "F08080"
+        return "27E102"
     elif 51.0 <= val <= 100.0:
-        return "F08080"
+        return "24BB05"
     elif 101.0 <= val <= 250.0:
-        return "F08080"
+        return "20AF04"
     elif 251.0 <= val <= 350.0:
-        return "F08080"
+        return "AD2204"
     elif 351.0 <= val <= 430.0:
-        return "F08080"
+        return "831A03"
     else:
-        return "F08080"
+        return "6A1402"
 
 
 def quality_return(val):
