@@ -336,7 +336,7 @@ class AirQualityGeneric(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         if request.method == "POST" and request.META.get("HTTP_X_API_KEY") == settings.HTTP_API_KEY and \
                 request.META.get('HTTP_X_API_VERSION', None) == settings.API_VERSION:
-            event = AirQuality.objects.all()
+            event = AirQuality.objects.all().order_by('id')
             return JsonResponse(dict(status=200,
                                      message="success",
                                      payload=dict(event_list=quality_color(event))))
