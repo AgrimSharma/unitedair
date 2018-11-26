@@ -342,7 +342,7 @@ class BlogSearchGeneric(generics.CreateAPIView):
                     page_no = request.POST.get('page_no',"")
             except Exception:
                 return JsonResponse(dict(status=400, message="Heading Missing", payload={}))
-            if not search_type or not page_no:
+            if not page_no:
                 return JsonResponse(dict(status=400, message="All Fields Required", payload={}))
             if search_text and search_type:
                 category = BlogCategories.objects.get(id=int(search_type))
