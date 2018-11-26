@@ -597,8 +597,20 @@ class AirPollutionGeneric(generics.CreateAPIView):
                                              color=color_return(
                                                  pm25_values['ch2avg']),
                                              quailty=quality_return(
-                                                 pm25_values['ch2avg']))
-                                     }))
+                                                 pm25_values['ch2avg'])),
+                                         "health_precaution": [
+                                             {
+                                                 "preference_image": "https://images-na.ssl-images-amazon.com/images/I/61BrNfDyNWL._SX425_.jpg",
+                                                 "preference_text": "Test Text"
+                                             },
+                                             {
+                                                 "exercise_image": "https://images-na.ssl-images-amazon.com/images/I/61BrNfDyNWL._SX425_.jpg",
+                                                 "exercise_text": "Test Text "
+                                             }
+                                         ]
+
+                                     }
+                                     ))
         else:
             return JsonResponse(dict(
                 status=400, message="Key missing", payload={}))
