@@ -352,7 +352,8 @@ class BlogSearchGeneric(generics.CreateAPIView):
                 event = Blog.objects.filter(heading__icontains=search_text).order_by("-created_date")
             return JsonResponse(dict(status=200,
                                      message="success",
-                                     payload=dict(events=blog_data(events=event, page_no=page_no), page_no=page_no
+                                     payload=dict(events=blog_data(events=event, page_no=page_no), page_no=page_no,
+                                                  count=event.count()
                                      )))
         else:
             return JsonResponse(dict(status=400, message="Key missing", payload={}))
