@@ -532,6 +532,6 @@ class RegistrationGeneric(generics.CreateAPIView):
                 return JsonResponse(dict(status=200, message="Already registered", payload={}))
             except Exception:
                 device = Registration.objects.create(email=email, name=name, phone=phone, device_id=device_id)
-                return JsonResponse(dict(status=200, message="User Eegistered", payload={}))
+                return JsonResponse(dict(status=200, message="User Registered", payload={}))
         else:
             return JsonResponse(dict(status=400, message="Key missing", payload={}))
