@@ -180,10 +180,13 @@ class EventDetailGeneric(generics.CreateAPIView):
                     device_id = request.POST.get('device_id', "")
             except Exception:
                 return JsonResponse(dict(status=400, message="Event ID Missing", payload={}))
+            try:
+                event = Events.objects.get(id=int(event_id))
+            except Exception:
+                return JsonResponse(dict(status=400, message="Event Not Found", payload={}))
 
-            event = Events.objects.get(id=int(event_id))
             interested = InterestedEvent.objects.filter(event=event)
-            user_interest = InterestedEvent.objects.filter(device_id=device_id)
+            user_interest = InterestedEvent.objects.filter(event=event, device_id=device_id)
             response = dict(
                 id=event.id,
                 heading=event.heading,
