@@ -746,31 +746,48 @@ class RegistrationGeneric(generics.CreateAPIView):
                 status=400, message="Key missing", payload={}))
 
 
-@csrf_exempt
-def blog_list_web(request):
-    if request.method == "POST" and \
-            request.META.get("HTTP_X_API_KEY") == settings.HTTP_API_KEY and \
-            request.META.get('HTTP_X_API_VERSION', None) == \
-            settings.API_VERSION:
-        blog = Blog.objects.all().order_by('-created_date')
-        response = []
-        for e in blog:
-            response.append(
-                dict(
-                    category=e.category.name,
-                    id=e.id,
-                    heading=e.heading,
-                    description=e.description,
-                    event_image=e.blog_image,
-                    create_date=e.created_date,
+class BlogCategoryWebListGeneric(generics.CreateAPIView):
+    queryset = Blog.objects.all()
+    serializer_class = BlogSerializer
+
+    def create(self, request, *args, **kwargs):
+        if request.method == "POST" and \
+                request.META.get("HTTP_X_API_KEY") == settings.HTTP_API_KEY \
+                and request.META.get('HTTP_X_API_VERSION', None) ==\
+                settings.API_VERSION:
+            try:
+                if request.data:
+                    category_id = request.data['category_id']
+                else:
+                    category_id = request.POST.get('category_id', "")
+                blog_category = BlogCategories.objects.get(id=int(category_id))
+
+            except Exception:
+                return JsonResponse(dict(
+                    status=400,
+                    message="Blog Category ID Missing",
+                    payload={}))
+            blog = Blog.objects.filter(
+                category=blog_category).order_by("-created_date")[:50]
+            response = []
+            for e in blog:
+                response.append(
+                    dict(
+                        category=e.category.name,
+                        category_id=e.category.id,
+                        id=e.id,
+                        heading=e.heading,
+                        description=e.description,
+                        event_image=e.blog_image,
+                        create_date=e.created_date,
+                    )
                 )
-            )
-        return JsonResponse(
-            dict(status=200, message="Success", payload={
-                "blog": response}))
-    else:
-        return JsonResponse(
-            dict(status=400, message="Key missing", payload={}))
+            return JsonResponse(dict(status=200,
+                                     message="success",
+                                     payload={"blog": response}))
+        else:
+            return JsonResponse(dict(
+                status=400, message="Key missing", payload={}))
 
 
 def privacy_policy(request):
