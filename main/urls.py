@@ -32,4 +32,5 @@ urlpatterns = [
     url(r'^air_pollution', AirPollutionGeneric.as_view()),
     url(r'^week_air_pollution', AirPollutionWeekGeneric.as_view()),
     url(r'^registration', RegistrationGeneric.as_view()),
+    url(r'^privacy-policy', privacy_policy),
 ]

@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+from django.shortcuts import render
+
 from .serailizers import *
 from django.http import JsonResponse
 from rest_framework.viewsets import generics
@@ -557,3 +560,7 @@ class RegistrationGeneric(generics.CreateAPIView):
                 return JsonResponse(dict(status=200, message="User Registered", payload={}))
         else:
             return JsonResponse(dict(status=400, message="Key missing", payload={}))
+
+
+def privacy_policy(request):
+    return render(request, "privacy.html")
