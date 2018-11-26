@@ -360,8 +360,10 @@ class BlogCategoryListGeneric(generics.CreateAPIView):
             try:
                 if request.data:
                     category_id = request.data['category_id']
+                    page_no = request.data['page_no']
                 else:
                     category_id = request.POST.get('category_id', "")
+                    page_no = request.POST.get('page_no', "")
                 blog_category = BlogCategories.objects.get(id=int(category_id))
 
             except Exception:
@@ -373,7 +375,7 @@ class BlogCategoryListGeneric(generics.CreateAPIView):
                 category=blog_category).order_by("-created_date")
             return JsonResponse(dict(status=200,
                                      message="success",
-                                     payload=blog_data(blog, page_no=1)))
+                                     payload=blog_data(blog, page_no=page_no)))
         else:
             return JsonResponse(dict(
                 status=400, message="Key missing", payload={}))
@@ -587,7 +589,7 @@ class AirPollutionGeneric(generics.CreateAPIView):
                                                 value=pm10_values['ch1avg'],
                                                 color=color_return(
                                                     pm10_values['ch1avg']),
-                                                 quality=quality_return(
+                                                quality=quality_return(
                                                      pm10_values['ch1avg'])),
                                          "PM2.5":dict(
                                              value=pm25_values['ch2avg'],
@@ -597,7 +599,8 @@ class AirPollutionGeneric(generics.CreateAPIView):
                                                  pm25_values['ch2avg']))
                                      }))
         else:
-            return JsonResponse(dict(status=400, message="Key missing", payload={}))
+            return JsonResponse(dict(
+                status=400, message="Key missing", payload={}))
 
 
 class AirPollutionWeekGeneric(generics.CreateAPIView):
@@ -605,7 +608,10 @@ class AirPollutionWeekGeneric(generics.CreateAPIView):
     serializer_class = AirPollutionSerializer
 
     def create(self, request, *args, **kwargs):
-        if request.method == "POST" and request.META.get("HTTP_X_API_KEY") == settings.HTTP_API_KEY and request.META.get('HTTP_X_API_VERSION', None) ==settings.API_VERSION:
+        if request.method == "POST" and \
+                request.META.get("HTTP_X_API_KEY") == settings.HTTP_API_KEY \
+                and request.META.get('HTTP_X_API_VERSION', None) ==\
+                settings.API_VERSION:
             try:
                 if request.data:
                     lat = request.data['lat']
@@ -615,18 +621,29 @@ class AirPollutionWeekGeneric(generics.CreateAPIView):
                     lon = request.POST.get('lon', "")
 
             except Exception:
-                return JsonResponse(dict(status=400, message="Latitude or Longitude Missing", payload={}))
+                return JsonResponse(dict(
+                    status=400, message="Latitude or Longitude Missing",
+                    payload={}))
             event = Towers.objects.all()
             nearest = nearest_tower(event, lat, lon)
             response_data = []
             if nearest == "ENV1":
                 url = "http://www.envirotechlive.com/app/ajax_cpcb.php"
                 for i in range(1,8):
-                    querystring = {"method": "requestStationReport", "quickReportType": "last7days",
-                                   "isMultiStation": "1","stationType": "aqmsp", "pagenum": i,"pagesize": "50",
-                                   "infoTypeRadio": "grid","graphTypeRadio": "line","exportTypeRadio": "csv",
-                                   "timeBase": "1hour", "valueTypeRadio": "normal", "timeBaseQuick": "24hours",
-                                   "locationsSelect": "168", "stationsSelect": "283","channelNos_283[]": ["1", "2"]
+                    querystring = {"method": "requestStationReport",
+                                   "quickReportType": "last7days",
+                                   "isMultiStation": "1",
+                                   "stationType": "aqmsp",
+                                   "pagenum": i,"pagesize": "50",
+                                   "infoTypeRadio": "grid",
+                                   "graphTypeRadio": "line",
+                                   "exportTypeRadio": "csv",
+                                   "timeBase": "1hour",
+                                   "valueTypeRadio": "normal",
+                                   "timeBaseQuick": "24hours",
+                                   "locationsSelect": "168",
+                                   "stationsSelect": "283",
+                                   "channelNos_283[]": ["1", "2"]
                                    }
 
                     response = requests.request("GET", url, params=querystring)
@@ -638,11 +655,19 @@ class AirPollutionWeekGeneric(generics.CreateAPIView):
                 url = "http://www.envirotechlive.com/app/ajax_cpcb.php"
 
                 for i in range(1, 8):
-                    querystring = {"method": "requestStationReport", "quickReportType": "last7days",
-                                   "isMultiStation": "1","stationType": "aqmsp", "pagenum": i, "pagesize": "50",
-                                   "infoTypeRadio": "grid","graphTypeRadio": "line", "exportTypeRadio": "csv",
-                                   "timeBase": "1hour","valueTypeRadio": "normal", "timeBaseQuick": "24hours",
-                                   "locationsSelect": "168","stationsSelect": "284", "channelNos_284[]": ["1", "2"]
+                    querystring = {"method": "requestStationReport",
+                                   "quickReportType": "last7days",
+                                   "isMultiStation": "1",
+                                   "stationType": "aqmsp", "pagenum": i,
+                                   "pagesize": "50","infoTypeRadio": "grid",
+                                   "graphTypeRadio": "line",
+                                   "exportTypeRadio": "csv",
+                                   "timeBase": "1hour",
+                                   "valueTypeRadio": "normal",
+                                   "timeBaseQuick": "24hours",
+                                   "locationsSelect": "168",
+                                   "stationsSelect": "284",
+                                   "channelNos_284[]": ["1", "2"]
                                    }
 
                     response = requests.request("GET", url, params=querystring)
@@ -658,23 +683,28 @@ class AirPollutionWeekGeneric(generics.CreateAPIView):
                     date = keys.split(" ")[0]
                     pm25 = values[1]
                     pm10 = values[0]
-                    resp.append({"date": date, "pm2.5":pm25, "pm10": pm10,"color": color_return(pm10)})
+                    resp.append({"date": date, "pm2.5":pm25,
+                                 "pm10": pm10,"color": color_return(pm10)})
                 else:
                     keys1, values1 = keys[0], values[0]
                     date = keys1.split(" ")[0]
                     pm25 = values1[1]
                     pm10 = values1[0]
-                    resp.append({"date": date, "pm2.5": pm25, "pm10": pm10,"color": color_return(pm10)})
+                    resp.append({"date": date, "pm2.5": pm25,
+                                 "pm10": pm10,"color": color_return(pm10)})
                     key, value = keys[1], values[1]
                     date = key.split(" ")[0]
                     pm25 = value[1]
                     pm10 = value[0]
-                    resp.append({"date": date, "pm2.5": pm25, "pm10": pm10, "color": color_return(pm10)})
+                    resp.append({
+                        "date": date, "pm2.5": pm25, "pm10": pm10,
+                        "color": color_return(pm10)})
             return JsonResponse(dict(status=200,
                                      message="success",
                                      payload=resp))
         else:
-            return JsonResponse(dict(status=400, message="Key missing", payload={}))
+            return JsonResponse(dict(
+                status=400, message="Key missing", payload={}))
 
 
 class RegistrationGeneric(generics.CreateAPIView):
@@ -682,7 +712,10 @@ class RegistrationGeneric(generics.CreateAPIView):
     serializer_class = RegistrationSerializer
 
     def create(self, request, *args, **kwargs):
-        if request.method == "POST" and request.META.get("HTTP_X_API_KEY") == settings.HTTP_API_KEY and request.META.get('HTTP_X_API_VERSION', None) ==settings.API_VERSION:
+        if request.method == "POST" and \
+                request.META.get("HTTP_X_API_KEY") == settings.HTTP_API_KEY \
+                and request.META.get('HTTP_X_API_VERSION', None) ==\
+                settings.API_VERSION:
             try:
                 if request.data:
                     name = request.data['name']
@@ -695,16 +728,47 @@ class RegistrationGeneric(generics.CreateAPIView):
                     phone = request.POST.get('phone', "")
                     device_id = request.POST.get('device_id', "")
             except Exception:
-                return JsonResponse(dict(status=400, message="All key are mandatory", payload={}))
+                return JsonResponse(dict(
+                    status=400, message="All key are mandatory", payload={}))
 
             try:
                 device = Registration.objects.get(email=email)
-                return JsonResponse(dict(status=200, message="Already registered", payload={}))
+                return JsonResponse(dict(
+                    status=200, message="Already registered", payload={}))
             except Exception:
-                device = Registration.objects.create(email=email, name=name, phone=phone, device_id=device_id)
-                return JsonResponse(dict(status=200, message="User Registered", payload={}))
+                device = Registration.objects.create(
+                    email=email, name=name, phone=phone, device_id=device_id)
+                return JsonResponse(dict(
+                    status=200, message="User Registered", payload={}))
         else:
-            return JsonResponse(dict(status=400, message="Key missing", payload={}))
+            return JsonResponse(dict(
+                status=400, message="Key missing", payload={}))
+
+
+def blog_list_web(request):
+    if request.method == "POST" and \
+            request.META.get("HTTP_X_API_KEY") == settings.HTTP_API_KEY and \
+            request.META.get('HTTP_X_API_VERSION', None) == \
+            settings.API_VERSION:
+        blog = Blog.objects.all().order_by('created_date')
+        response = []
+        for e in blog:
+            response.append(
+                dict(
+                    category=e.category.name,
+                    id=e.id,
+                    heading=e.heading,
+                    description=e.description,
+                    event_image=e.blog_image,
+                    create_date=e.created_date,
+                )
+            )
+        return JsonResponse(
+            dict(status=400, message="Key missing", payload={
+                "blogs": response}))
+    else:
+        return JsonResponse(
+            dict(status=400, message="Key missing", payload={}))
 
 
 def privacy_policy(request):

@@ -46,10 +46,11 @@ class BlogCategorySerializer(serializers.ModelSerializer):
 
 class BlogSerializer(serializers.ModelSerializer):
     category_id = serializers.CharField(required=True, help_text=_("Blog Category ID"))
+    page_no = serializers.CharField(required=True, help_text=_("Page no"))
 
     class Meta:
         model = Blog
-        fields = ["category_id"]
+        fields = ["category_id", "page_no"]
 
 
 class BlogDetailsSerializer(serializers.ModelSerializer):
