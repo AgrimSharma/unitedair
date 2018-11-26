@@ -136,3 +136,22 @@ class AirPollution(models.Model):
 
     def __str__(self):
         return "{} : {}: {}".format(self.towers.location, self.pm25, self.pm10)
+
+
+class Registration(models.Model):
+    name = models.CharField(max_length=1000)
+    email = models.EmailField(unique=True)
+    device_id = models.CharField(max_length=1000)
+    phone = models.CharField(max_length=100)
+    created_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ('-created_date',)
+        verbose_name = "Registration"
+        verbose_name_plural = "Registration"
+
+    def __unicode__(self):
+        return "{}".format(self.email)
+
+    def __str__(self):
+        return "{}".format(self.email)

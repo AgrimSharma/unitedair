@@ -32,6 +32,10 @@ class TowerAdmin(admin.ModelAdmin):
     list_display = ["location", "latitude", "longitude"]
 
 
+class RegistrationAdmin(admin.ModelAdmin):
+    list_display = ["name", "email", "phone", "device_id"]
+
+
 class BlogAdmin(admin.ModelAdmin):
 
     def category_name(self, obj):
@@ -46,5 +50,6 @@ admin.site.register(InterestedEvent, InterestedEventAdmin)
 admin.site.register(BlogCategories, BlogCategoryAdmin)
 admin.site.register(Blog, BlogAdmin)
 admin.site.register(AirQuality, AirQualityAdmin)
+admin.site.register(Registration, RegistrationAdmin)
 admin.site.register(AirPollution, AirPollutionAdmin)
 admin.site.register(Towers, TowerAdmin)

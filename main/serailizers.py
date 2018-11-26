@@ -81,3 +81,14 @@ class AirPollutionSerializer(serializers.ModelSerializer):
     class Meta:
         model = AirPollution
         fields = ['lat', "lon"]
+
+
+class RegistrationSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(required=True, help_text=_("Name"))
+    email = serializers.EmailField(required=True, help_text=_("email"))
+    phone = serializers.CharField(required=True, help_text=_("phone"))
+    device_id = serializers.CharField(required=True, help_text=_("Device ID"))
+
+    class Meta:
+        model = Registration
+        fields = ['name', "email", "phone", "device_id"]

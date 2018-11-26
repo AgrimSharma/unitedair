@@ -389,7 +389,7 @@ class AirPollutionGeneric(generics.CreateAPIView):
                     lon = request.POST.get('lon', "")
 
             except Exception:
-                return JsonResponse(dict(status=400, message="Blog Category ID Missing", payload={}))
+                return JsonResponse(dict(status=400, message="Latitude or Longitude Missing", payload={}))
 
             event = Towers.objects.all()
             nearest = nearest_tower(event, lat, lon)
@@ -445,7 +445,7 @@ class AirPollutionWeekGeneric(generics.CreateAPIView):
                     lon = request.POST.get('lon', "")
 
             except Exception:
-                return JsonResponse(dict(status=400, message="Blog Category ID Missing", payload={}))
+                return JsonResponse(dict(status=400, message="Latitude or Longitude Missing", payload={}))
             event = Towers.objects.all()
             nearest = nearest_tower(event, lat, lon)
             response_data = []
@@ -503,5 +503,35 @@ class AirPollutionWeekGeneric(generics.CreateAPIView):
             return JsonResponse(dict(status=200,
                                      message="success",
                                      payload=resp))
+        else:
+            return JsonResponse(dict(status=400, message="Key missing", payload={}))
+
+
+class RegistrationGeneric(generics.CreateAPIView):
+    queryset = Registration.objects.all()
+    serializer_class = RegistrationSerializer
+
+    def create(self, request, *args, **kwargs):
+        if request.method == "POST" and request.META.get("HTTP_X_API_KEY") == settings.HTTP_API_KEY and request.META.get('HTTP_X_API_VERSION', None) ==settings.API_VERSION:
+            try:
+                if request.data:
+                    name = request.data['name']
+                    email = request.data['email']
+                    phone = request.data['phone']
+                    device_id = request.data['device_id']
+                else:
+                    name = request.POST.get('name', "")
+                    email = request.POST.get('email', "")
+                    phone = request.POST.get('phone', "")
+                    device_id = request.POST.get('device_id', "")
+            except Exception:
+                return JsonResponse(dict(status=400, message="All key are mandatory", payload={}))
+
+            try:
+                device = Registration.objects.get(email=email)
+                return JsonResponse(dict(status=200, message="Already registered", payload={}))
+            except Exception:
+                device = Registration.objects.create(email=email, name=name, phone=phone, device_id=device_id)
+                return JsonResponse(dict(status=200, message="User Eegistered", payload={}))
         else:
             return JsonResponse(dict(status=400, message="Key missing", payload={}))
