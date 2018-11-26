@@ -155,3 +155,19 @@ class Registration(models.Model):
 
     def __str__(self):
         return "{}".format(self.email)
+
+
+class UserSubscribe(models.Model):
+    email = models.EmailField(unique=True)
+    created_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ('-created_date',)
+        verbose_name = "User Subscribe"
+        verbose_name_plural = "User Subscribe"
+
+    def __unicode__(self):
+        return "{}".format(self.email)
+
+    def __str__(self):
+        return "{}".format(self.email)

@@ -95,3 +95,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Registration
         fields = ['name', "email", "phone", "device_id"]
+
+
+class UserSubscribeSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(required=True, help_text=_("email"))
+
+    class Meta:
+        model = Registration
+        fields = ["email"]

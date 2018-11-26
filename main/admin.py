@@ -36,6 +36,10 @@ class RegistrationAdmin(admin.ModelAdmin):
     list_display = ["name", "email", "phone", "device_id"]
 
 
+class UserSubscribeAdmin(admin.ModelAdmin):
+    list_display = ["email"]
+
+
 class BlogAdmin(admin.ModelAdmin):
 
     def category_name(self, obj):
@@ -49,6 +53,7 @@ admin.site.register(Events, EventAdmin)
 admin.site.register(InterestedEvent, InterestedEventAdmin)
 admin.site.register(BlogCategories, BlogCategoryAdmin)
 admin.site.register(Blog, BlogAdmin)
+admin.site.register(UserSubscribe, UserSubscribeAdmin)
 admin.site.register(AirQuality, AirQualityAdmin)
 admin.site.register(Registration, RegistrationAdmin)
 admin.site.register(AirPollution, AirPollutionAdmin)

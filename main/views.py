@@ -802,5 +802,40 @@ class BlogCategoryWebListGeneric(generics.CreateAPIView):
                 status=400, message="Key missing", payload={}))
 
 
+class UserSubscribeGeneric(generics.CreateAPIView):
+    queryset = UserSubscribe.objects.all()
+    serializer_class = UserSubscribeSerializer
+
+    def create(self, request, *args, **kwargs):
+        if request.method == "POST" and \
+                request.META.get("HTTP_X_API_KEY") == settings.HTTP_API_KEY \
+                and request.META.get('HTTP_X_API_VERSION', None) ==\
+                settings.API_VERSION:
+            try:
+                if request.data:
+                    email = request.data['email']
+                else:
+                    email = request.POST.get('email', "")
+            except Exception:
+                return JsonResponse(dict(
+                    status=400,
+                    message="Email Missing",
+                    payload={}))
+            try:
+                blog_category = UserSubscribe.objects.get(email=email)
+                message = "Already Registered"
+                status = 200
+            except Exception:
+                blog_category = UserSubscribe.objects.create(email=email)
+                message = "Registered"
+                status = 200
+            return JsonResponse(dict(status=status,
+                                     message=message,
+                                     payload={}))
+        else:
+            return JsonResponse(dict(
+                status=400, message="Key missing", payload={}))
+
+
 def privacy_policy(request):
     return render(request, "privacy.html")
