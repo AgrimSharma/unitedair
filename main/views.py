@@ -58,31 +58,31 @@ def blog_data(events):
 
 def color_return(val):
     val = float(val)
-    if 0.0 <= val < 51.0:
-        return "27E102"
-    elif 51.0 <= val <= 100.0:
-        return "24BB05"
-    elif 101.0 <= val <= 250.0:
-        return "20AF04"
-    elif 251.0 <= val <= 350.0:
-        return "AD2204"
-    elif 351.0 <= val <= 430.0:
-        return "831A03"
+    if 0.0 <= val < 30.0:
+        return "16734"
+    elif 31.0 <= val <= 60.0:
+        return "01a84d"
+    elif 61.0 <= val <= 90.0:
+        return "d0bc18"
+    elif 91.0 <= val <= 120.0:
+        return "eb9413"
+    elif 120.0 <= val <= 250.0:
+        return "e11a23"
     else:
-        return "6A1402"
+        return "94150d"
 
 
 def quality_return(val):
     val = float(val)
-    if 0.0 <= val < 51.0:
+    if 0.0 <= val < 30.0:
         return 'GOOD'
-    elif 51.0 <= val <= 100.0:
+    elif 31.0 <= val <= 60.0:
         return 'SATISFACTORY'
-    elif 101.0 <= val <= 250.0:
+    elif 61.0 <= val <= 90.0:
         return 'MODERATE'
-    elif 251.0 <= val <= 350.0:
+    elif 91.0 <= val <= 120.0:
         return 'POOR'
-    elif 351.0 <= val <= 430.0:
+    elif 121.0 <= val <= 250.0:
         return 'VERY POOR'
     else:
         return 'SEVERELY POLLUTED'
@@ -359,6 +359,19 @@ def nearest_tower(event, lat, lon):
         return "ENV1"
     elif b < a or b == 0:
         return "ENV2"
+
+
+def distance(data, points):
+    min_dist = 99999
+    resp = ()
+    for i in range(len(data)):
+        vals = data[i]
+        dist = (vals[0] - points[0]) ** 2 + (vals[1] - points[1]) ** 2
+        eucd = math.sqrt(dist)
+        if eucd < min_dist:
+            min_dist = eucd
+            resp = vals
+    return resp
 
 
 class AirPollutionGeneric(generics.CreateAPIView):
