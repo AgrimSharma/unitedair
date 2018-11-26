@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 
 from .serailizers import *
 from django.http import JsonResponse
@@ -745,6 +746,7 @@ class RegistrationGeneric(generics.CreateAPIView):
                 status=400, message="Key missing", payload={}))
 
 
+@csrf_exempt
 def blog_list_web(request):
     if request.method == "POST" and \
             request.META.get("HTTP_X_API_KEY") == settings.HTTP_API_KEY and \
