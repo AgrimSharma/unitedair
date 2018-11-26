@@ -39,7 +39,16 @@ def event_data(events, page_no):
     return response
 
 
-def blog_data(events):
+def blog_data(events, page_no):
+    page_no = int(page_no)
+    start, end, page = 0, 10, 1
+    if page_no == 1:
+        events = events[start:end]
+    else:
+        count = page_no - page
+        start = start + count * 10
+        end = end + count * 10
+        events = events[start:end]
     response = []
     for e in events:
         response.append(
@@ -321,16 +330,26 @@ class BlogSearchGeneric(generics.CreateAPIView):
         if request.method == "POST" and request.META.get("HTTP_X_API_KEY") == settings.HTTP_API_KEY and request.META.get('HTTP_X_API_VERSION', None) ==settings.API_VERSION:
             try:
                 if request.data:
-                    heading = request.data['heading']
+                    search_text = request.data['search_text']
+                    search_type = request.data['search_type']
+                    page_no = request.data['page_no']
                 else:
-                    heading = request.POST.get('heading', "")
+                    search_text = request.POST.get('search_text',"")
+                    search_type = request.POST.get('search_type',"")
+                    page_no = request.POST.get('page_no',"")
             except Exception:
                 return JsonResponse(dict(status=400, message="Heading Missing", payload={}))
-
-            event = Blog.objects.filter(heading__icontains=heading).order_by("-created_date")
+            if not search_type or not page_no:
+                return JsonResponse(dict(status=400, message="All Fields Required", payload={}))
+            if search_text and search_type:
+                category = BlogCategories.objects.get(id=int(search_type))
+                event = Blog.objects.filter(heading__icontains=search_text, category=category).order_by(
+                    "-created_date")
+            else:
+                event = Blog.objects.filter(heading__icontains=search_text).order_by("-created_date")
             return JsonResponse(dict(status=200,
                                      message="success",
-                                     payload=dict(events=blog_data(event)
+                                     payload=dict(events=blog_data(events=event, page_no=page_no)
                                      )))
         else:
             return JsonResponse(dict(status=400, message="Key missing", payload={}))

@@ -61,11 +61,13 @@ class BlogDetailsSerializer(serializers.ModelSerializer):
 
 
 class BlogSearchSerializer(serializers.ModelSerializer):
-    heading = serializers.CharField(required=True, help_text=_("Blog ID"))
+    search_text = serializers.CharField(required=False, help_text=_("Event Heading"))
+    search_type = serializers.CharField(required=False, help_text=_("Event Heading"))
+    page_no = serializers.IntegerField(required=True)
 
     class Meta:
         model = Blog
-        fields = ['heading']
+        fields = ['search_text', 'search_type', "page_no"]
 
 
 class AirQualitySerializer(serializers.ModelSerializer):
