@@ -194,7 +194,7 @@ class EventDetailGeneric(generics.CreateAPIView):
                 event_address=event.event_address,
                 latitude=event.latitude,
                 longitude=event.longitude,
-                interested_users=interested.count(),
+                number_interested_users=interested.count(),
                 user_interest=1 if len(user_interest) > 0 else 0
             )
             return JsonResponse(dict(status=200,
