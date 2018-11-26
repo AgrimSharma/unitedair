@@ -752,7 +752,7 @@ def blog_list_web(request):
             request.META.get("HTTP_X_API_KEY") == settings.HTTP_API_KEY and \
             request.META.get('HTTP_X_API_VERSION', None) == \
             settings.API_VERSION:
-        blog = Blog.objects.all().order_by('created_date')
+        blog = Blog.objects.all().order_by('-created_date')
         response = []
         for e in blog:
             response.append(
