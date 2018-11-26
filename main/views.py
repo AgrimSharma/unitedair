@@ -764,8 +764,8 @@ def blog_list_web(request):
                 )
             )
         return JsonResponse(
-            dict(status=400, message="Key missing", payload={
-                "blogs": response}))
+            dict(status=200, message="Success", payload={
+                "blog": response}))
     else:
         return JsonResponse(
             dict(status=400, message="Key missing", payload={}))
