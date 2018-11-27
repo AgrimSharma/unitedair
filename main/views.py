@@ -463,16 +463,29 @@ class BlogSearchGeneric(generics.CreateAPIView):
                 return JsonResponse(dict(
                     status=400, message="All Fields Required", payload={}))
             if search_text and search_type and page_no:
-                category = BlogCategories.objects.get(id=int(search_type))
-                event = Blog.objects.filter(
-                    heading__icontains=search_text,
-                    category=category).order_by(
-                    "-created_date")
+                category = BlogCategories.objects.filter(id=int(search_type))
+                if category:
+                    event = Blog.objects.filter(
+                        heading__icontains=search_text,
+                        category=category[0]).order_by(
+                        "-created_date")
+                else:
+                    return JsonResponse(dict(status=200,
+                                             message="Blog Category doesn't "
+                                                     "exists",
+                                             payload=dict()))
             elif search_type and page_no:
-                category = BlogCategories.objects.get(id=int(search_type))
-                event = Blog.objects.filter(
-                    category=category).order_by(
-                    "-created_date")
+                category = BlogCategories.objects.filter(id=int(search_type))
+                if category:
+
+                    event = Blog.objects.filter(
+                        category=category[0]).order_by(
+                        "-created_date")
+                else:
+                    return JsonResponse(dict(status=200,
+                                             message="Blog Category doesn't "
+                                                     "exists",
+                                             payload=dict()))
             else:
                 event = Blog.objects.filter(
                     heading__icontains=search_text).order_by("-created_date")
