@@ -41,10 +41,13 @@ class UserSubscribeAdmin(admin.ModelAdmin):
 
 
 class UserNotificationAdmin(admin.ModelAdmin):
-    list_display = ["device", "event", "device_type"]
+    list_display = ["device", "events", "device_type"]
 
     def device(self, obj):
         return obj.device_token[:20]
+
+    def events(self, obj):
+        return obj.event.heading
 
 
 class BlogAdmin(admin.ModelAdmin):
