@@ -103,3 +103,13 @@ class UserSubscribeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Registration
         fields = ["email"]
+
+
+class UserNotificationSerializer(serializers.ModelSerializer):
+    device_id = serializers.CharField(required=True, help_text=_("email"))
+    lat = serializers.CharField(required=True, help_text=_("Latitude"))
+    lon = serializers.CharField(required=True, help_text=_("Longitude"))
+
+    class Meta:
+        model = UserNotification
+        fields = ["device_id", "lat", "lon"]

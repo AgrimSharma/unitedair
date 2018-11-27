@@ -36,4 +36,5 @@ urlpatterns = [
     url(r'^api_blog_web', BlogCategoryWebListGeneric.as_view()),
     url(r'^event_api_web', EventWebGeneric.as_view()),
     url(r'^subscribe', UserSubscribeGeneric.as_view()),
+    url(r'^notification', NotificationGeneric.as_view()),
 ]

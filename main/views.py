@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-
+from pyfcm import FCMNotification
 from .serailizers import *
 from django.http import JsonResponse
 from rest_framework.viewsets import generics
@@ -936,6 +936,50 @@ class EventWebGeneric(generics.CreateAPIView):
         else:
             return JsonResponse(dict(status=400, message="Key missing",
                                      payload={}))
+
+
+class NotificationGeneric(generics.CreateAPIView):
+    """
+    Class for fetching all the upcoming and past events
+    """
+    queryset = UserNotification.objects.all()
+    serializer_class = UserNotificationSerializer
+
+    def create(self, request, *args, **kwargs):
+        if request.method == "POST" and \
+                request.META.get("HTTP_X_API_KEY") == settings.HTTP_API_KEY \
+                and request.META.get('HTTP_X_API_VERSION', None) == \
+                settings.API_VERSION:
+            try:
+                if request.data:
+                    device_id = request.data['device_id']
+                    lat = request.data['lat']
+                    lon = request.data['lon']
+                else:
+                    device_id = request.POST.get('device_id', "")
+                    lat = request.POST.get('lat', "")
+                    lon = request.POST.get('lon', "")
+            except Exception:
+                return JsonResponse(dict(
+                    status=400, message="All key are mandatory", payload={}))
+            push_service = FCMNotification(api_key=settings.FIRE_BASE_API_KEY)
+            events = Events.objects.filter(lat__lte=lat, lon__lte=lon)
+            for e in events:
+                try:
+                    user_dev = UserNotification.objects.get(
+                        device_id=device_id, event=e)
+                except Exception:
+                    user_dev = UserNotification.objects.create(
+                        device_id=device_id, event=e)
+
+                push_service.notify_single_device(
+                    registration_id=device_id,
+                    message_title=e.heading, message_body=e.description)
+
+            status = 200,
+            message = "Notification sent"
+            return JsonResponse(dict(
+                status=status, message=message, payload={}))
 
 
 def privacy_policy(request):

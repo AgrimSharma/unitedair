@@ -171,3 +171,20 @@ class UserSubscribe(models.Model):
 
     def __str__(self):
         return "{}".format(self.email)
+
+
+class UserNotification(models.Model):
+    device_token = models.CharField(max_length=2000)
+    event = models.ForeignKey(to=Events, on_delete=models.CASCADE)
+    created_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ('-created_date',)
+        verbose_name = "User Notification"
+        verbose_name_plural = "User Notification"
+
+    def __unicode__(self):
+        return "{} : {}".format(self.device_token, self.event.name)
+
+    def __str__(self):
+        return "{} : {}".format(self.device_token, self.event.name)
