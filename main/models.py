@@ -184,7 +184,7 @@ class UserNotification(models.Model):
         verbose_name_plural = "User Notification"
 
     def __unicode__(self):
-        return "{} : {}".format(self.device_token, self.event.name)
+        return "{} : {}".format(self.device_token, self.event.heading)
 
     def __str__(self):
-        return "{} : {}".format(self.device_token, self.event.name)
+        return "{} : {}".format(self.device_token, self.event.heading)
