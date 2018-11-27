@@ -72,9 +72,11 @@ class BlogSearchSerializer(serializers.ModelSerializer):
 
 
 class AirQualitySerializer(serializers.ModelSerializer):
+    pm_type = serializers.CharField(required=True, help_text=_("Latitude"))
 
     class Meta:
         model = AirQuality
+        fields = ['pm_type']
 
 
 class AirPollutionSerializer(serializers.ModelSerializer):

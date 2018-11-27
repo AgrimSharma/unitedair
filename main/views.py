@@ -536,7 +536,11 @@ class AirQualityGeneric(generics.CreateAPIView):
                 request.META.get("HTTP_X_API_KEY") == settings.HTTP_API_KEY \
                 and request.META.get('HTTP_X_API_VERSION', None) == \
                 settings.API_VERSION:
-            event = AirQuality.objects.all().order_by('id')
+            if request.data:
+                pm_type = request.data['pm_type']
+            else:
+                pm_type = request.POST.get('pm_type', "")
+            event = AirQuality.objects.filter(pm_type=pm_type).order_by('id')
             return JsonResponse(dict(status=200,
                                      message="success",
                                      payload=dict(

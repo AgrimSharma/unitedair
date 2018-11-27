@@ -87,6 +87,7 @@ class AirQuality(models.Model):
     color_code = models.CharField(max_length=100, null=True, blank=True)
     minimum = models.IntegerField()
     maximum = models.IntegerField()
+    pm_type = models.CharField(null=True, blank=True, max_length=100)
     display_text = models.CharField(max_length=100)
     created_date = models.DateTimeField(auto_now=True)
 
