@@ -104,7 +104,27 @@ def blog_data(events, page_no):
     return response
 
 
-def color_return(val):
+def color_return_pm10(val):
+    """
+    :param val: float value
+    :return: color corresponding to pollution
+    """
+    val = float(val)
+    if 0.0 <= val < 50.0:
+        return "16734"
+    elif 51.0 <= val <= 100.0:
+        return "01a84d"
+    elif 101.0 <= val <= 250.0:
+        return "d0bc18"
+    elif 251.0 <= val <= 350.0:
+        return "eb9413"
+    elif 351.0 <= val <= 430.0:
+        return "e11a23"
+    else:
+        return "94150d"
+
+
+def color_return_pm25(val):
     """
     :param val: float value
     :return: color corresponding to pollution
@@ -656,13 +676,13 @@ class AirPollutionGeneric(generics.CreateAPIView):
                                          "PM10":
                                              dict(
                                                 value=pm10_values['ch1avg'],
-                                                color=color_return(
+                                                color=color_return_pm10(
                                                     pm10_values['ch1avg']),
                                                 quality=quality_return_pm10(
                                                      pm10_values['ch1avg'])),
                                          "PM25":dict(
                                              value=pm25_values['ch2avg'],
-                                             color=color_return(
+                                             color=color_return_pm25(
                                                  pm25_values['ch2avg']),
                                              quality=quality_return_pm25(
                                                  pm25_values['ch2avg'])),
@@ -767,22 +787,33 @@ class AirPollutionWeekGeneric(generics.CreateAPIView):
                     date = keys.split(" ")[0]
                     pm25 = values[1]
                     pm10 = values[0]
-                    resp.append({"date": date, "pm25":pm25,
-                                 "pm10": pm10,"color": color_return(pm10)})
+                    # resp.append({"date": date, "pm25":pm25,
+                    #              "pm10": pm10,"color": color_return(pm10)})
+                    resp.append(dict(
+                        pm25=dict(date=date, value=pm25, color=color_return_pm25(pm25)),
+                        pm10=dict(date=date, value=pm10, color=color_return_pm10(pm10)),
+                    ))
                 else:
                     keys1, values1 = keys[0], values[0]
                     date = keys1.split(" ")[0]
                     pm25 = values1[1]
                     pm10 = values1[0]
-                    resp.append({"date": date, "pm25": pm25,
-                                 "pm10": pm10,"color": color_return(pm10)})
+                    resp.append(dict(
+                        pm25=dict(date=date, value=pm25,
+                                  color=color_return_pm25(pm25)),
+                        pm10=dict(date=date, value=pm10,
+                                  color=color_return_pm10(pm10)),
+                    ))
                     key, value = keys[1], values[1]
                     date = key.split(" ")[0]
                     pm25 = value[1]
                     pm10 = value[0]
-                    resp.append({
-                        "date": date, "pm25": pm25, "pm10": pm10,
-                        "color": color_return(pm10)})
+                    resp.append(dict(
+                        pm25=dict(date=date, value=pm25,
+                                  color=color_return_pm25(pm25)),
+                        pm10=dict(date=date, value=pm10,
+                                  color=color_return_pm10(pm10)),
+                    ))
             return JsonResponse(dict(status=200,
                                      message="success",
                                      payload=resp))
