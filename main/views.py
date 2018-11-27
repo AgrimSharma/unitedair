@@ -462,10 +462,15 @@ class BlogSearchGeneric(generics.CreateAPIView):
             if not page_no:
                 return JsonResponse(dict(
                     status=400, message="All Fields Required", payload={}))
-            if search_text and search_type:
+            if search_text and search_type and page_no:
                 category = BlogCategories.objects.get(id=int(search_type))
                 event = Blog.objects.filter(
                     heading__icontains=search_text,
+                    category=category).order_by(
+                    "-created_date")
+            elif search_type and page_no:
+                category = BlogCategories.objects.get(id=int(search_type))
+                event = Blog.objects.filter(
                     category=category).order_by(
                     "-created_date")
             else:
