@@ -976,7 +976,7 @@ class NotificationGeneric(generics.CreateAPIView):
                     registration_id=device_id,
                     message_title=e.heading, message_body=e.description)
 
-            status = 200,
+            status = 200
             message = "Notification sent"
             return JsonResponse(dict(
                 status=status, message=message, payload={}))
