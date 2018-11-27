@@ -963,7 +963,7 @@ class NotificationGeneric(generics.CreateAPIView):
                 return JsonResponse(dict(
                     status=400, message="All key are mandatory", payload={}))
             push_service = FCMNotification(api_key=settings.FIRE_BASE_API_KEY)
-            events = Events.objects.filter(lat__lte=lat, lon__lte=lon)
+            events = Events.objects.filter(latitude__lte=lat, longitude__lte=lon)
             for e in events:
                 try:
                     user_dev = UserNotification.objects.get(
