@@ -427,6 +427,7 @@ class BlogDetailGeneric(generics.CreateAPIView):
                                      message="success",
                                      payload=dict(
                                         id=blog_category.id,
+                                        category=blog_category.name,
                                         heading=blog_category.heading,
                                         description=blog_category.description,
                                         event_image=blog_category.blog_image,
