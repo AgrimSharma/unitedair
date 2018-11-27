@@ -621,13 +621,13 @@ class AirPollutionGeneric(generics.CreateAPIView):
                                          "health_precaution": [
                                              dict(
 
-                                                 exercise_image="https://d943jm6rlnzra.cloudfront.net/wp-content/uploads/2016/10/02062149/5.png",
-                                                 exercise_text="Test Text1"
+                                                 preference_image="https://d943jm6rlnzra.cloudfront.net/wp-content/uploads/2016/10/02062149/5.png",
+                                                 preference_text="Test Text1"
                                          ),
                                              dict(
 
-                                                 exercise_image="http://iconsetc.com/icons-watermarks/flat-circle-white-on-blue/sports/sports_running-3/sports_running-3_flat-circle-white-on-blue_512x512.png",
-                                                 exercise_text="Test Text1"
+                                                 preference_image="http://iconsetc.com/icons-watermarks/flat-circle-white-on-blue/sports/sports_running-3/sports_running-3_flat-circle-white-on-blue_512x512.png",
+                                                 preference_text="Test Text1"
                                              )
                                          ]
 
