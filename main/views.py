@@ -959,10 +959,12 @@ class NotificationGeneric(generics.CreateAPIView):
                     device_id = request.data['device_id']
                     lat = request.data['lat']
                     lon = request.data['lon']
+                    device_type = request.data['device_type']
                 else:
                     device_id = request.POST.get('device_id', "")
                     lat = request.POST.get('lat', "")
                     lon = request.POST.get('lon', "")
+                    device_type = request.POST.get('device_type', "")
             except Exception:
                 return JsonResponse(dict(
                     status=400, message="All key are mandatory", payload={}))
@@ -974,7 +976,7 @@ class NotificationGeneric(generics.CreateAPIView):
                         device_token=device_id, event=e)
                 except Exception:
                     user_dev = UserNotification.objects.create(
-                        device_token=device_id, event=e)
+                        device_token=device_id, event=e, device_type=device_type)
 
                 push_service.notify_single_device(
                     registration_id=device_id,

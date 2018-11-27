@@ -177,6 +177,7 @@ class UserSubscribe(models.Model):
 class UserNotification(models.Model):
     device_token = models.CharField(max_length=2000)
     event = models.ForeignKey(to=Events, on_delete=models.CASCADE)
+    device_type = models.CharField(max_length=100)
     created_date = models.DateTimeField(auto_now=True)
 
     class Meta:

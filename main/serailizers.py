@@ -108,7 +108,8 @@ class UserSubscribeSerializer(serializers.ModelSerializer):
 
 
 class UserNotificationSerializer(serializers.ModelSerializer):
-    device_id = serializers.CharField(required=True, help_text=_("email"))
+    device_id = serializers.CharField(required=True, help_text=_("device_id"))
+    device_type = serializers.CharField(required=True, help_text=_("device_type"))
     lat = serializers.CharField(required=True, help_text=_("Latitude"))
     lon = serializers.CharField(required=True, help_text=_("Longitude"))
 
