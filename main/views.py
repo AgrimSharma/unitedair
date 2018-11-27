@@ -462,29 +462,27 @@ class BlogSearchGeneric(generics.CreateAPIView):
             if not page_no:
                 return JsonResponse(dict(
                     status=400, message="All Fields Required", payload={}))
-            # if search_text and search_type and page_no:
-            #     category = BlogCategories.objects.get(id=int(search_type))
-            #     event = Blog.objects.filter(
-            #         heading__icontains=search_text,
-            #         category=category).order_by(
-            #         "-created_date")
-            # elif search_type and page_no:
-            #     category = BlogCategories.objects.get(id=int(search_type))
-            #     event = Blog.objects.filter(
-            #         category=category).order_by(
-            #         "-created_date")
-            # else:
-            #     event = Blog.objects.filter(
-            #         heading__icontains=search_text).order_by("-created_date")
+            if search_text and search_type and page_no:
+                category = BlogCategories.objects.get(id=int(search_type))
+                event = Blog.objects.filter(
+                    heading__icontains=search_text,
+                    category=category).order_by(
+                    "-created_date")
+            elif search_type and page_no:
+                category = BlogCategories.objects.get(id=int(search_type))
+                event = Blog.objects.filter(
+                    category=category).order_by(
+                    "-created_date")
+            else:
+                event = Blog.objects.filter(
+                    heading__icontains=search_text).order_by("-created_date")
             return JsonResponse(dict(status=200,
                                      message="success",
                                      payload=dict(
-                                         events= search_text,
-                                         search_type=search_type
-                                         # blog_data(events=event,
-                                         #                  page_no=page_no),
-                                         # page_no=page_no,
-                                         # count=event.count()
+                                         events=blog_data(events=event,
+                                                          page_no=page_no),
+                                         page_no=page_no,
+                                         count=event.count()
                                      )))
         else:
             return JsonResponse(dict(status=400,
