@@ -40,6 +40,13 @@ class UserSubscribeAdmin(admin.ModelAdmin):
     list_display = ["email"]
 
 
+class UserNotificationAdmin(admin.ModelAdmin):
+    list_display = ["device_id", "event"]
+
+    def event(self, obj):
+        return obj.event.heading
+
+
 class BlogAdmin(admin.ModelAdmin):
 
     def category_name(self, obj):
@@ -56,5 +63,6 @@ admin.site.register(Blog, BlogAdmin)
 admin.site.register(UserSubscribe, UserSubscribeAdmin)
 admin.site.register(AirQuality, AirQualityAdmin)
 admin.site.register(Registration, RegistrationAdmin)
+admin.site.register(UserNotification, UserNotificationAdmin)
 admin.site.register(AirPollution, AirPollutionAdmin)
 admin.site.register(Towers, TowerAdmin)
