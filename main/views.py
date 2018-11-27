@@ -106,17 +106,17 @@ def quality_return_pm25(val):
     """
     val = float(val)
     if 0.0 <= val < 30.0:
-        return 'GOOD'
+        return 'GOOD'.lower()
     elif 31.0 <= val <= 60.0:
-        return 'SATISFACTORY'
+        return 'SATISFACTORY'.lower()
     elif 61.0 <= val <= 90.0:
-        return 'MODERATE'
+        return 'MODERATE'.lower()
     elif 91.0 <= val <= 120.0:
-        return 'POOR'
+        return 'POOR'.lower()
     elif 121.0 <= val <= 250.0:
-        return 'VERY POOR'
+        return 'VERY POOR'.lower()
     else:
-        return 'SEVERELY POLLUTED'
+        return 'SEVERELY POLLUTED'.lower()
 
 
 def quality_return_pm10(val):
@@ -126,17 +126,17 @@ def quality_return_pm10(val):
     """
     val = float(val)
     if 0.0 <= val < 50.0:
-        return 'GOOD'
+        return 'GOOD'.lower()
     elif 51.0 <= val <= 100.0:
-        return 'SATISFACTORY'
+        return 'SATISFACTORY'.lower()
     elif 101.0 <= val <= 250.0:
-        return 'MODERATE'
+        return 'MODERATE'.lower()
     elif 251.0 <= val <= 350.0:
-        return 'POOR'
+        return 'POOR'.lower()
     elif 351.0 <= val <= 430.0:
-        return 'VERY POOR'
+        return 'VERY POOR'.lower()
     else:
-        return 'SEVERELY POLLUTED'
+        return 'SEVERELY POLLUTED'.lower()
 
 
 def quality_color(quality):
