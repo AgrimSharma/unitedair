@@ -620,11 +620,11 @@ class AirPollutionGeneric(generics.CreateAPIView):
                                                  pm25_values['ch2avg'])),
                                          "health_precaution": [
                                              {
-                                                 "preference_image": "https://images-na.ssl-images-amazon.com/images/I/61BrNfDyNWL._SX425_.jpg",
-                                                 "preference_text": "Test Text"
+                                                 "exercise_image": "https://d943jm6rlnzra.cloudfront.net/wp-content/uploads/2016/10/02062149/5.png",
+                                                 "exercise_image": "Test Text"
                                              },
                                              {
-                                                 "exercise_image": "https://images-na.ssl-images-amazon.com/images/I/61BrNfDyNWL._SX425_.jpg",
+                                                 "exercise_image": "http://iconsetc.com/icons-watermarks/flat-circle-white-on-blue/sports/sports_running-3/sports_running-3_flat-circle-white-on-blue_512x512.png",
                                                  "exercise_text": "Test Text "
                                              }
                                          ]
