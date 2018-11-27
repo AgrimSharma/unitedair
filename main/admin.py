@@ -41,7 +41,7 @@ class UserSubscribeAdmin(admin.ModelAdmin):
 
 
 class UserNotificationAdmin(admin.ModelAdmin):
-    list_display = ["device_id", "event"]
+    list_display = ["device_token", "event"]
 
     def event(self, obj):
         return obj.event.heading

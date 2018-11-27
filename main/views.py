@@ -967,10 +967,10 @@ class NotificationGeneric(generics.CreateAPIView):
             for e in events:
                 try:
                     user_dev = UserNotification.objects.get(
-                        device_id=device_id, event=e)
+                        device_token=device_id, event=e)
                 except Exception:
                     user_dev = UserNotification.objects.create(
-                        device_id=device_id, event=e)
+                        device_token=device_id, event=e)
 
                 push_service.notify_single_device(
                     registration_id=device_id,
