@@ -616,7 +616,7 @@ class AirPollutionGeneric(generics.CreateAPIView):
                                              value=pm25_values['ch2avg'],
                                              color=color_return(
                                                  pm25_values['ch2avg']),
-                                             quailty=quality_return_pm25(
+                                             quality=quality_return_pm25(
                                                  pm25_values['ch2avg'])),
                                          "health_precaution": [
                                              {
