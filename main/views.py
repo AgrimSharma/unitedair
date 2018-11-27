@@ -99,7 +99,7 @@ def color_return(val):
         return "94150d"
 
 
-def quality_return(val):
+def quality_return_pm25(val):
     """
     :param val: float value of pollution
     :return: return degree of pollution
@@ -114,6 +114,26 @@ def quality_return(val):
     elif 91.0 <= val <= 120.0:
         return 'POOR'
     elif 121.0 <= val <= 250.0:
+        return 'VERY POOR'
+    else:
+        return 'SEVERELY POLLUTED'
+
+
+def quality_return_pm10(val):
+    """
+    :param val: float value of pollution
+    :return: return degree of pollution
+    """
+    val = float(val)
+    if 0.0 <= val < 50.0:
+        return 'GOOD'
+    elif 51.0 <= val <= 100.0:
+        return 'SATISFACTORY'
+    elif 101.0 <= val <= 250.0:
+        return 'MODERATE'
+    elif 251.0 <= val <= 350.0:
+        return 'POOR'
+    elif 351.0 <= val <= 430.0:
         return 'VERY POOR'
     else:
         return 'SEVERELY POLLUTED'
@@ -590,13 +610,13 @@ class AirPollutionGeneric(generics.CreateAPIView):
                                                 value=pm10_values['ch1avg'],
                                                 color=color_return(
                                                     pm10_values['ch1avg']),
-                                                quality=quality_return(
+                                                quality=quality_return_pm10(
                                                      pm10_values['ch1avg'])),
                                          "PM25":dict(
                                              value=pm25_values['ch2avg'],
                                              color=color_return(
                                                  pm25_values['ch2avg']),
-                                             quailty=quality_return(
+                                             quailty=quality_return_pm25(
                                                  pm25_values['ch2avg'])),
                                          "health_precaution": [
                                              {
