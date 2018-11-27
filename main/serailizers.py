@@ -63,7 +63,7 @@ class BlogDetailsSerializer(serializers.ModelSerializer):
 
 class BlogSearchSerializer(serializers.ModelSerializer):
     search_text = serializers.CharField(required=False, help_text=_("Event Heading"))
-    search_type = serializers.CharField(required=False, help_text=_("Event Heading"))
+    search_type = serializers.CharField(required=True, help_text=_("Event Heading"))
     page_no = serializers.IntegerField(required=True)
 
     class Meta:
