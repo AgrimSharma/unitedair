@@ -13,6 +13,31 @@ import math
 import requests
 
 
+def event_data_web(events):
+    """
+    :param events: Event List
+    :param page_no: Integer
+    :return: A event list
+    """
+    response = []
+    for e in events:
+        response.append(
+            dict(
+                id=e.id,
+                heading=e.heading,
+                description=e.description,
+                event_image=e.event_image,
+                event_date=e.event_date,
+                event_time=e.event_time,
+                event_address=e.event_address,
+                latitude=e.latitude,
+                longitude=e.longitude
+            )
+        )
+
+    return response
+
+
 def event_data(events, page_no):
     """
     :param events: Event List
@@ -877,6 +902,40 @@ class UserSubscribeGeneric(generics.CreateAPIView):
         else:
             return JsonResponse(dict(
                 status=400, message="Key missing", payload={}))
+
+
+class EventWebGeneric(generics.CreateAPIView):
+    """
+    Class for fetching all the upcoming and past events
+    """
+    queryset = Events.objects.all()
+    serializer_class = EventSerializer
+
+    def create(self, request, *args, **kwargs):
+        if request.method == "POST" and \
+                request.META.get("HTTP_X_API_KEY") == settings.HTTP_API_KEY \
+                and request.META.get('HTTP_X_API_VERSION', None) == \
+                settings.API_VERSION:
+
+            today = datetime.datetime.now().date()
+            events_future = Events.objects.filter(event_date__gte=today).\
+                order_by("event_date")
+            events_past = Events.objects.filter(event_date__lt=today).\
+                order_by("-event_date")
+            future_events = event_data_web(events_future)
+            past_events = event_data_web(events_past)
+            return JsonResponse(dict(status=200,
+                                message="success",
+                                payload=dict(
+                                    upcoming_event=future_events,
+                                    past_events=past_events,
+                                    past_event_count=events_past.count(),
+                                    upcoming_event_count=events_future.count(),
+                                )
+                                ))
+        else:
+            return JsonResponse(dict(status=400, message="Key missing",
+                                     payload={}))
 
 
 def privacy_policy(request):
