@@ -39,16 +39,15 @@ def distance(data, points):
     """
     min_dist = 99999
     resp = ()
-    latitude = points[0]
-    longitude = points[1]
+    latitude = float(points[0])
+    longitude = float(points[1])
     for i in range(len(data)):
         vals = data[i]
-        dist = (vals.latitude - float(latitude)) ** 2 + (vals.longitude - float(longitude)) ** 2
+        dist = (vals.latitude - latitude) ** 2 + (vals.longitude - longitude) ** 2
         eucd = math.sqrt(dist)
         if eucd < min_dist:
             min_dist = eucd
             resp = vals
-    print resp
     return resp
 
 
