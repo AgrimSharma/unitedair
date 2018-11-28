@@ -162,7 +162,8 @@ def air_pollution_weekly_static(location):
     pm10_list = []
     pm25_list = []
     current = datetime.datetime.now().date()
-    last_week = current - datetime.timedelta(days=5)
+    days = 6
+    last_week = current - datetime.timedelta(days=days)
     if location in location_first:
         locations_select = 168
         stations_select = 283
@@ -173,45 +174,72 @@ def air_pollution_weekly_static(location):
         locations_select = 168
         stations_select = 283
     url = "http://www.envirotechlive.com/app/ajax_cpcb.php"
-    for i in range(1, 5):
+    for i in range(1, days):
         dates = last_week + datetime.timedelta(days=i)
         date_str = dates.strftime("%d-%m-%Y")
-        querystring = {"method": "requestStationReport",
-                       "quickReportType": "null",
-                       "isMultiStation": "1",
-                       "stationType": "aqmsp",
-                       "pagenum": "1", "pagesize": "50",
-                       "infoTypeRadio": "grid",
-                       "graphTypeRadio": "line",
-                       "exportTypeRadio": "csv",
-                       "fromDate": "{} 00:00".format(date_str),
-                       "toDate": "{} 23:59".format(date_str),
-                       "timeBase": "24hours",
-                       "valueTypeRadio": "normal",
-                       "timeBaseQuick": "24hours",
-                       "locationsSelect": locations_select,
-                       "stationsSelect": stations_select,
-                       "channelNos_{}[]".format(stations_select): ["1", "2"]}
-        response = requests.request("GET", url, params=querystring)
-        data = response.json()
 
-        if len(data['data']) > 0:
-            average = data['avgminmax']
+        try:
+            data = AirPollutionWeekly.objects.get(pollution_date=dates)
             pm10_list.append(dict(
                 date=date_str,
-                maximum=average['max'][0],
-                minimum=average['min'][0],
-                color_max=color_return_pm10(average['max'][0]),
-                color_min=color_return_pm10(average['min'][0]),
+                maximum=data.pm10_max,
+                minimum=data.pm10_min,
+                color_max=color_return_pm10(data.pm10_max),
+                color_min=color_return_pm10(data.pm10_min),
             ))
             pm25_list.append(dict(
                 date=date_str,
-                maximum=average['max'][1],
-                minimum=average['min'][1],
-                color_max=color_return_pm25(average['max'][1]),
-                color_min=color_return_pm25(average['min'][1])
+                maximum=data.pm25_max,
+                minimum=data.pm25_min,
+                color_max=color_return_pm25(data.pm25_max),
+                color_min=color_return_pm25(data.pm25_min)
 
             ))
+        except Exception:
+            querystring = {"method": "requestStationReport",
+                           "quickReportType": "null",
+                           "isMultiStation": "1",
+                           "stationType": "aqmsp",
+                           "pagenum": "1", "pagesize": "50",
+                           "infoTypeRadio": "grid",
+                           "graphTypeRadio": "line",
+                           "exportTypeRadio": "csv",
+                           "fromDate": "{} 00:00".format(date_str),
+                           "toDate": "{} 23:59".format(date_str),
+                           "timeBase": "24hours",
+                           "valueTypeRadio": "normal",
+                           "timeBaseQuick": "24hours",
+                           "locationsSelect": locations_select,
+                           "stationsSelect": stations_select,
+                           "channelNos_{}[]".format(stations_select): ["1", "2"]}
+            response = requests.request("GET", url, params=querystring)
+            data = response.json()
+            tower = Towers.objects.get(stationsSelect=stations_select)
+            if len(data['data']) > 0:
+                average = data['avgminmax']
+                pm10_list.append(dict(
+                    date=date_str,
+                    maximum=average['max'][0],
+                    minimum=average['min'][0],
+                    color_max=color_return_pm10(average['max'][0]),
+                    color_min=color_return_pm10(average['min'][0]),
+                ))
+                pm25_list.append(dict(
+                    date=date_str,
+                    maximum=average['max'][1],
+                    minimum=average['min'][1],
+                    color_max=color_return_pm25(average['max'][1]),
+                    color_min=color_return_pm25(average['min'][1])
+
+                ))
+                AirPollutionWeekly.objects.create(
+                    pollution_date=datetime.datetime.strptime(date_str, "%d-%m-%Y"),
+                    pm10_max=average['max'][0],
+                    pm10_min=average['min'][0],
+                    pm25_max=average['max'][1],
+                    pm25_min=average['min'][1],
+                    tower=tower
+                )
 
     return dict(pm25=pm25_list,
                 pm10=pm10_list,

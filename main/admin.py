@@ -40,6 +40,10 @@ class UserSubscribeAdmin(admin.ModelAdmin):
     list_display = ["email"]
 
 
+class AirPollutionLogsAdmin(admin.ModelAdmin):
+    list_display = ["pollution_date", "pm25_max", "pm10_max"]
+
+
 class UserNotificationAdmin(admin.ModelAdmin):
     list_display = ["device", "events", "device_type"]
 
@@ -68,4 +72,5 @@ admin.site.register(AirQuality, AirQualityAdmin)
 admin.site.register(Registration, RegistrationAdmin)
 admin.site.register(UserNotification, UserNotificationAdmin)
 admin.site.register(AirPollution, AirPollutionAdmin)
+admin.site.register(AirPollutionWeekly, AirPollutionLogsAdmin)
 admin.site.register(Towers, TowerAdmin)

@@ -192,3 +192,23 @@ class UserNotification(models.Model):
 
     def __str__(self):
         return "{} : {}".format(self.device_token, self.event.heading)
+
+
+class AirPollutionWeekly(models.Model):
+    pollution_date = models.DateField()
+    pm25_max = models.FloatField()
+    pm25_min = models.FloatField()
+    pm10_max = models.FloatField()
+    pm10_min = models.FloatField()
+    tower = models.ForeignKey(to=Towers, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ('-pollution_date',)
+        verbose_name = "Air Pollution Weekly"
+        verbose_name_plural = "Air Pollution Weekly"
+
+    def __unicode__(self):
+        return "{} : {} : {} : {}".format(self.pollution_date, self.pm25_max, self.pm10_max, self.tower.location)
+
+    def __str__(self):
+        return "{} : {} : {} : {}".format(self.pollution_date, self.pm25_max, self.pm10_max, self.tower.location)
