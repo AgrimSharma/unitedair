@@ -1036,3 +1036,11 @@ class NotificationGeneric(generics.CreateAPIView):
 
 def privacy_policy(request):
     return render(request, "privacy.html")
+
+
+def terms_and_condition(request):
+    return render(request, "privacy.html")
+
+
+def about_us(request):
+    return render(request, "about_us.html")

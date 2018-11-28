@@ -32,9 +32,12 @@ urlpatterns = [
     url(r'^air_pollution', AirPollutionGeneric.as_view()),
     url(r'^week_air_pollution', AirPollutionWeekGeneric.as_view()),
     url(r'^registration', RegistrationGeneric.as_view()),
-    url(r'^privacy-policy', privacy_policy),
     url(r'^api_blog_web', BlogCategoryWebListGeneric.as_view()),
     url(r'^event_api_web', EventWebGeneric.as_view()),
     url(r'^subscribe', UserSubscribeGeneric.as_view()),
     url(r'^notification', NotificationGeneric.as_view()),
+
+    url(r'^privacy-policy', privacy_policy),
+    url(r'^terms', terms_and_condition),
+    url(r'^about_us', about_us),
 ]
