@@ -93,6 +93,7 @@ def blog_data(events, page_no):
         response.append(
             dict(
                 category=e.category.name,
+                category_id=e.category.id,
                 id=e.id,
                 heading=e.heading,
                 description=e.description,
