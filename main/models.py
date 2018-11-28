@@ -107,6 +107,8 @@ class Towers(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
     location = models.CharField(max_length=1000)
+    stationsSelect = models.CharField(max_length=1000, null=True, blank=True)
+    locationsSelect = models.CharField(max_length=1000, null=True, blank=True)
     created_date = models.DateTimeField(auto_now=True)
 
     class Meta:
