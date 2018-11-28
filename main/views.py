@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
 from pyfcm import FCMNotification
 from .serailizers import *
 from django.http import JsonResponse
@@ -38,6 +37,7 @@ def distance(data, points):
     :param points: current location lat long
     :return: nearest tower
     """
+    import pdb;pdb.set_trace()
     min_dist = 99999
     resp = ()
     latitude = points[0]
@@ -140,7 +140,6 @@ def air_quality_data(locations_select, stations_select):
                    "channelNos_{}[]".format(stations_select): ["1", "2"]}
 
     response = requests.request("GET", url=url, params=querystring)
-    print response.json()
     return response.json()
 
 
