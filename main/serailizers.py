@@ -80,12 +80,12 @@ class AirQualitySerializer(serializers.ModelSerializer):
 
 
 class AirPollutionSerializer(serializers.ModelSerializer):
-    lat = serializers.CharField(required=True, help_text=_("Latitude"))
-    lon = serializers.CharField(required=True, help_text=_("Longitude"))
+    location = serializers.CharField(required=False, help_text=_("Latitude"))
+    # lon = serializers.CharField(required=True, help_text=_("Longitude"))
 
     class Meta:
         model = AirPollution
-        fields = ['lat', "lon"]
+        fields = ['location']
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
