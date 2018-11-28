@@ -239,6 +239,7 @@ def color_return_pm10(val):
     :param val: float value
     :return: color corresponding to pollution
     """
+    print val
     val = float(val)
     if 0.0 <= val < 50.0:
         return "16734"
@@ -728,6 +729,7 @@ class AirPollutionGeneric(generics.CreateAPIView):
             response = air_quality_data(nearest.stationsSelect, nearest.locationsSelect)
             data = response
             channels = data['avgminmax']['max']
+            print channels
             return JsonResponse(dict(status=200,
                                      message="success",
                                      payload={
