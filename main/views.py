@@ -13,6 +13,9 @@ import requests
 from math import sin, cos, sqrt, atan2, radians
 import re
 
+location_first = ["Golf Course", "DLF Cyber Hub", "Udyog Vihar Phase - 4"]
+location_second = ["Arjan Garh", "Sector 7, Gurgaon", "Ambaince Mall, Gurgaon"]
+
 
 def isValidEmail(email):
     match = re.match(
@@ -153,6 +156,99 @@ def air_pollution_weekly(stations_select, locations_select):
     return dict(pm25=pm25_list,
                 pm10=pm10_list,
                 pm_scale=pollutant_list())
+
+
+def air_pollution_weekly_static(location):
+    pm10_list = []
+    pm25_list = []
+    current = datetime.datetime.now().date()
+    last_week = current - datetime.timedelta(days=5)
+    if location in location_first:
+        locations_select = 168
+        stations_select = 283
+    elif location in location_second:
+        locations_select = 169
+        stations_select = 284
+    else:
+        locations_select = 168
+        stations_select = 283
+    url = "http://www.envirotechlive.com/app/ajax_cpcb.php"
+    for i in range(1, 5):
+        dates = last_week + datetime.timedelta(days=i)
+        date_str = dates.strftime("%d-%m-%Y")
+        querystring = {"method": "requestStationReport",
+                       "quickReportType": "null",
+                       "isMultiStation": "1",
+                       "stationType": "aqmsp",
+                       "pagenum": "1", "pagesize": "50",
+                       "infoTypeRadio": "grid",
+                       "graphTypeRadio": "line",
+                       "exportTypeRadio": "csv",
+                       "fromDate": "{} 00:00".format(date_str),
+                       "toDate": "{} 23:59".format(date_str),
+                       "timeBase": "24hours",
+                       "valueTypeRadio": "normal",
+                       "timeBaseQuick": "24hours",
+                       "locationsSelect": locations_select,
+                       "stationsSelect": stations_select,
+                       "channelNos_{}[]".format(stations_select): ["1", "2"]}
+        response = requests.request("GET", url, params=querystring)
+        data = response.json()
+
+        if len(data['data']) > 0:
+            average = data['avgminmax']
+            pm10_list.append(dict(
+                date=date_str,
+                maximum=average['max'][0],
+                minimum=average['min'][0],
+                color_max=color_return_pm10(average['max'][0]),
+                color_min=color_return_pm10(average['min'][0]),
+            ))
+            pm25_list.append(dict(
+                date=date_str,
+                maximum=average['max'][1],
+                minimum=average['min'][1],
+                color_max=color_return_pm25(average['max'][1]),
+                color_min=color_return_pm25(average['min'][1])
+
+            ))
+
+    return dict(pm25=pm25_list,
+                pm10=pm10_list,
+                pm_scale=pollutant_list())
+
+
+def air_quality_static(location):
+    if location in location_first:
+        locations_select = 168
+        stations_select = 283
+    elif location in location_second:
+        locations_select = 169
+        stations_select = 284
+    else:
+        locations_select = 168
+        stations_select = 283
+    current = datetime.datetime.now().date().strftime("%d-%m-%Y")
+    current_ct = datetime.datetime.now().strftime("%d-%m-%Y %H:%M")
+    url = "http://www.envirotechlive.com/app/ajax_cpcb.php"
+
+    querystring = {"method": "requestStationReport",
+                   "quickReportType": "today",
+                   "isMultiStation": "1", "stationType": "aqmsp",
+                   "pagenum": "1", "pagesize": "50",
+                   "infoTypeRadio": "grid",
+                   "graphTypeRadio": "line",
+                   "exportTypeRadio": "csv",
+                   "fromDate": "{} 00:00".format(current),
+                   "toDate": current_ct,
+                   "timeBase": "1hour", "valueTypeRadio": "normal",
+                   "timeBaseQuick": "24hours",
+                   "locationsSelect": locations_select,
+                   "stationsSelect": stations_select,
+                   "channelNos_{}[]".format(stations_select): ["1", "2"]}
+
+    response = requests.request("GET", url=url, params=querystring)
+    return response.json()
 
 
 def air_quality_data(stations_select, locations_select):
@@ -748,22 +844,19 @@ class AirPollutionGeneric(generics.CreateAPIView):
                 settings.API_VERSION:
             try:
                 if request.data:
-                    lat = request.data['lat']
-                    lon = request.data['lon']
+                    location = request.data.get('location',"")
                 else:
-                    lat = request.POST.get('lat', "")
-                    lon = request.POST.get('lon', "")
-
+                    location = request.POST.get('location', "")
             except Exception:
                 return JsonResponse(dict(
                     status=400,
-                    message="Latitude or Longitude Missing", payload={}))
+                    message="Location Missing", payload={}))
 
-            event = Towers.objects.all()
-            nearest = distance(event, [lat, lon])
-            response = air_quality_data(nearest.stationsSelect,
-                                        nearest.locationsSelect)
-            data = response
+            # event = Towers.objects.all()
+            # nearest = distance(event, [lat, lon])
+            # response = air_quality_data(nearest.stationsSelect,
+            #                             nearest.locationsSelect)
+            data = air_quality_static(location)
             channels = data['avgminmax']['max']
             return JsonResponse(dict(status=200,
                                      message="success",
@@ -793,7 +886,8 @@ class AirPollutionGeneric(generics.CreateAPIView):
                                                  preference_text="Test Text1"
                                              )
                                          ],
-                                         "distance": distance_between( [lat, lon], nearest)
+                                         "area_list": location_first + location_second
+                                         # "distance": distance_between( [lat, lon], nearest)
 
                                      }
                                      ))
@@ -813,20 +907,18 @@ class AirPollutionWeekGeneric(generics.CreateAPIView):
                 settings.API_VERSION:
             try:
                 if request.data:
-                    lat = request.data['lat']
-                    lon = request.data['lon']
+                    location = request.data.get('location',"")
                 else:
-                    lat = request.POST.get('lat', "")
-                    lon = request.POST.get('lon', "")
-
+                    location = request.POST.get('location', "")
             except Exception:
                 return JsonResponse(dict(
-                    status=400, message="Latitude or Longitude Missing",
-                    payload={}))
-            event = Towers.objects.all()
-            nearest = distance(event, [lat, lon])
-            response = air_pollution_weekly(nearest.stationsSelect,
-                                            nearest.locationsSelect)
+                    status=400,
+                    message="Location Missing", payload={}))
+            # event = Towers.objects.all()
+            # nearest = distance(event, [lat, lon])
+            # response = air_pollution_weekly(nearest.stationsSelect,
+            #                                 nearest.locationsSelect)
+            response = air_pollution_weekly_static(location)
             return JsonResponse(dict(status=200,
                                      message="success",
                                      payload=response))
@@ -940,11 +1032,11 @@ class UserSubscribeGeneric(generics.CreateAPIView):
             if validated:
                 try:
                     blog_category = UserSubscribe.objects.get(email=email)
-                    message = "Already Registered"
+                    message = "Already Subscribed"
                     status = 200
                 except Exception:
                     blog_category = UserSubscribe.objects.create(email=email)
-                    message = "Registered"
+                    message = "Subscribed"
                     status = 200
             else:
                 message = "Please enter correct Email"
