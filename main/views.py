@@ -716,25 +716,12 @@ def pollutant_list():
         pm25_quality = AirQuality.objects.get(name=l, pm_type='PM25')
         response.append(
             dict(
-                pm25_value="{}-{}".format(pm25_quality.minimum, pm25_quality.maximum) if pm25_quality.minimum < 251 else "> {}".format(pm25_quality.minimum),
-                pm10_value="{}-{}".format(pm10_quality.minimum, pm10_quality.maximum) if pm10_quality.minimum < 431 else "> {}".format(pm10_quality.minimum),
+                pm25_value="{}-{}".format(pm25_quality.minimum, pm25_quality.maximum) if pm25_quality.minimum < 251 else ">{}".format(pm25_quality.minimum),
+                pm10_value="{}-{}".format(pm10_quality.minimum, pm10_quality.maximum) if pm10_quality.minimum < 431 else ">{}".format(pm10_quality.minimum),
                 color_code = pm10_quality.color_code,
                 name=pm10_quality.name
             )
         )
-            # dict(
-            #     pm10=dict(maximum=pm10_quality.maximum,
-            #               minimum=pm10_quality.minimum,
-            #               name=pm10_quality.name,
-            #               color=pm10_quality.color_code
-            #               ),
-            #     pm25=dict(maximum=pm25_quality.maximum,
-            #               minimum=pm25_quality.minimum,
-            #               name=pm25_quality.name,
-            #               color=pm25_quality.color_code
-            #               )
-            # )
-        # )
     return response
 
 

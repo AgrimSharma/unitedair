@@ -20,7 +20,7 @@ class BlogCategoryAdmin(admin.ModelAdmin):
 
 
 class AirQualityAdmin(admin.ModelAdmin):
-    list_display = ["name", "minimum", "maximum", "pm_type"]
+    list_display = ["pm_type", "name", "minimum", "maximum"]
 
 
 class AirPollutionAdmin(admin.ModelAdmin):
