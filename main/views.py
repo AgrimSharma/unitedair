@@ -69,7 +69,7 @@ def pollutant_list():
     return response
 
 
-def air_pollution_weekly(locations_select, stations_select):
+def air_pollution_weekly(stations_select, locations_select):
     pm10_list = []
     pm25_list = []
     current = datetime.datetime.now().date()
