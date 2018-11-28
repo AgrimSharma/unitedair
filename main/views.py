@@ -11,6 +11,16 @@ from django.conf import settings
 import math
 import requests
 from math import sin, cos, sqrt, atan2, radians
+import re
+
+
+def isValidEmail(email):
+    match = re.match(
+        '^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$',
+        email)
+    if match == None:
+        return False
+    return True
 
 
 def distance_between(current, tower):
@@ -926,13 +936,18 @@ class UserSubscribeGeneric(generics.CreateAPIView):
                     status=400,
                     message="Email Missing",
                     payload={}))
-            try:
-                blog_category = UserSubscribe.objects.get(email=email)
-                message = "Already Registered"
-                status = 200
-            except Exception:
-                blog_category = UserSubscribe.objects.create(email=email)
-                message = "Registered"
+            validated = isValidEmail(email)
+            if validated:
+                try:
+                    blog_category = UserSubscribe.objects.get(email=email)
+                    message = "Already Registered"
+                    status = 200
+                except Exception:
+                    blog_category = UserSubscribe.objects.create(email=email)
+                    message = "Registered"
+                    status = 200
+            else:
+                message = "Please enter correct Email"
                 status = 200
             return JsonResponse(dict(status=status,
                                      message=message,
