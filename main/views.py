@@ -10,6 +10,30 @@ import datetime
 from django.conf import settings
 import math
 import requests
+from math import sin, cos, sqrt, atan2, radians
+
+
+def distance_between(current, tower):
+    latitude = float(current[0])
+    longitude = float(current[1])
+    tower_latitude = tower.latitude
+    tower_longitude = tower.longitude
+    R = 6373.0
+
+    lat1 = radians(latitude)
+    lon1 = radians(longitude)
+    lat2 = radians(tower_latitude)
+    lon2 = radians(tower_longitude)
+
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+    distance = R * c
+    distance = round(distance, 2)
+    return "{} Km".format(distance)
 
 
 def nearest_tower(event, lat, lon):
@@ -727,8 +751,8 @@ class AirPollutionGeneric(generics.CreateAPIView):
 
             event = Towers.objects.all()
             nearest = distance(event, [lat, lon])
-            print nearest.stationsSelect, nearest.locationsSelect
-            response = air_quality_data(nearest.stationsSelect, nearest.locationsSelect)
+            response = air_quality_data(nearest.stationsSelect,
+                                        nearest.locationsSelect)
             data = response
             channels = data['avgminmax']['max']
             return JsonResponse(dict(status=200,
@@ -758,8 +782,8 @@ class AirPollutionGeneric(generics.CreateAPIView):
                                                  preference_image="http://iconsetc.com/icons-watermarks/flat-circle-white-on-blue/sports/sports_running-3/sports_running-3_flat-circle-white-on-blue_512x512.png",
                                                  preference_text="Test Text1"
                                              )
-                                         ]
-
+                                         ],
+                                         "distance": distance_between( [lat, lon], nearest)
 
                                      }
                                      ))
