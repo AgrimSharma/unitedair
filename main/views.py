@@ -104,12 +104,15 @@ def air_pollution_weekly(locations_select, stations_select):
             pm10_list.append(dict(
                 date=date_str,
                 maximum=average['max'][0],
-                minimum=average['min'][0]
+                minimum=average['min'][0],
+                color=color_return_pm10(average['max'][0])
             ))
             pm25_list.append(dict(
                 date=date_str,
                 maximum=average['max'][1],
-                minimum=average['min'][1]
+                minimum=average['min'][1],
+                color=color_return_pm25(average['max'][1])
+
             ))
 
     return dict(pm25=pm25_list,
