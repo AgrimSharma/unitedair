@@ -636,34 +636,41 @@ class AirPollutionGeneric(generics.CreateAPIView):
             if nearest == "ENV1":
                 url = "http://www.envirotechlive.com/app/ajax_cpcb.php"
 
-                querystring = {
-                    "method": "requestRecent", "isMultiStation": "1",
-                    "stationType": "aqmsp",
-                    "lastDataDate": current +" 00:00:00",
-                    "pagenum": "1", "pagesize": "50","infoTypeRadio": "grid",
-                    "graphTypeRadio": "line", "exportTypeRadio": "csv",
-                    "fromDate": current + " 00:00",
-                    "toDate": current_ct, "timeBase": "1hour",
-                    "valueTypeRadio": "normal", "timeBaseQuick": "30min",
-                    "locationsSelect": "168","stationsSelect": "283",
-                    "channelNos_283[]": ["1", "2"]}
+                querystring = {"method": "requestStationReport",
+                               "quickReportType": "today",
+                               "isMultiStation": "1", "stationType": "aqmsp",
+                               "lastDataDate": "28-11-2018 03:45:00",
+                               "pagenum": "1", "pagesize": "50",
+                               "infoTypeRadio": "grid",
+                               "graphTypeRadio": "line",
+                               "exportTypeRadio": "csv",
+                               "fromDate": "{} 00:00".format(current),
+                               "toDate": current_ct,
+                               "timeBase": "1hour", "valueTypeRadio": "normal",
+                               "timeBaseQuick": "24hours",
+                               "locationsSelect": "168",
+                               "stationsSelect": "283",
+                               "channelNos_283[]": ["1", "2"]}
 
                 response = requests.request("GET", url=url, params=querystring)
             else:
                 url = "http://www.envirotechlive.com/app/ajax_cpcb.php"
 
-                querystring = {
-                    "method": "requestRecent", "isMultiStation": "1",
-                    "stationType": "aqmsp",
-                    "lastDataDate": current + " 00:00:00",
-                    "pagenum": "1", "pagesize": "50", "infoTypeRadio": "grid",
-                    "graphTypeRadio": "line", "exportTypeRadio": "csv",
-                    "fromDate": current + " 00:00",
-                    "toDate": current_ct, "timeBase": "1hour",
-                    "valueTypeRadio": "normal", "timeBaseQuick": "30min",
-                    "locationsSelect": "168", "stationsSelect": "284",
-                    "channelNos_284[]": ["1", "2"]
-                }
+                querystring = {"method": "requestStationReport",
+                               "quickReportType": "today",
+                               "isMultiStation": "1", "stationType": "aqmsp",
+                               "lastDataDate": "28-11-2018 00:00:00",
+                               "pagenum": "1", "pagesize": "50",
+                               "infoTypeRadio": "grid",
+                               "graphTypeRadio": "line",
+                               "exportTypeRadio": "csv",
+                               "fromDate": "{} 00:00".format(current),
+                               "toDate": current_ct,
+                               "timeBase": "1hour", "valueTypeRadio": "normal",
+                               "timeBaseQuick": "24hours",
+                               "locationsSelect": "169",
+                               "stationsSelect": "284",
+                               "channelNos_284[]": ["1", "2"]}
 
                 response = requests.request("GET", url=url, params=querystring)
             data = response.json()
