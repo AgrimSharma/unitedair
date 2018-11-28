@@ -95,7 +95,6 @@ def air_pollution_weekly(stations_select, locations_select):
                        "locationsSelect": locations_select,
                        "stationsSelect": stations_select,
                        "channelNos_{}[]".format(stations_select): ["1", "2"]}
-
         response = requests.request("GET", url, params=querystring)
         data = response.json()
 
@@ -105,13 +104,15 @@ def air_pollution_weekly(stations_select, locations_select):
                 date=date_str,
                 maximum=average['max'][0],
                 minimum=average['min'][0],
-                color=color_return_pm10(average['max'][0])
+                color_max=color_return_pm10(average['max'][0]),
+                color_min=color_return_pm10(average['min'][0]),
             ))
             pm25_list.append(dict(
                 date=date_str,
                 maximum=average['max'][1],
                 minimum=average['min'][1],
-                color=color_return_pm25(average['max'][1])
+                color_max=color_return_pm25(average['max'][1]),
+                color_min=color_return_pm25(average['min'][1])
 
             ))
 
@@ -128,7 +129,6 @@ def air_quality_data(stations_select, locations_select):
     querystring = {"method": "requestStationReport",
                    "quickReportType": "today",
                    "isMultiStation": "1", "stationType": "aqmsp",
-                   "lastDataDate": "28-11-2018 03:45:00",
                    "pagenum": "1", "pagesize": "50",
                    "infoTypeRadio": "grid",
                    "graphTypeRadio": "line",
