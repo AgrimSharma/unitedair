@@ -43,11 +43,8 @@ def distance(data, points):
     longitude = float(points[1])
     for i in range(len(data)):
         vals = data[i]
-        print vals
         dist = (vals.latitude - latitude) ** 2 + (vals.longitude - longitude) ** 2
-        print dist
         eucd = math.sqrt(dist)
-        print eucd
         if eucd < min_dist:
             min_dist = eucd
             resp = vals
@@ -120,7 +117,7 @@ def air_pollution_weekly(locations_select, stations_select):
                 pm_scale=pollutant_list())
 
 
-def air_quality_data(locations_select, stations_select):
+def air_quality_data(stations_select, locations_select):
     current = datetime.datetime.now().date().strftime("%d-%m-%Y")
     current_ct = datetime.datetime.now().strftime("%d-%m-%Y %H:%M")
     url = "http://www.envirotechlive.com/app/ajax_cpcb.php"
@@ -242,7 +239,6 @@ def color_return_pm10(val):
     :param val: float value
     :return: color corresponding to pollution
     """
-    print val
     val = float(val)
     if 0.0 <= val < 50.0:
         return "16734"
@@ -728,11 +724,10 @@ class AirPollutionGeneric(generics.CreateAPIView):
 
             event = Towers.objects.all()
             nearest = distance(event, [lat, lon])
-
+            print nearest.stationsSelect, nearest.locationsSelect
             response = air_quality_data(nearest.stationsSelect, nearest.locationsSelect)
             data = response
             channels = data['avgminmax']['max']
-            print channels
             return JsonResponse(dict(status=200,
                                      message="success",
                                      payload={
@@ -793,7 +788,6 @@ class AirPollutionWeekGeneric(generics.CreateAPIView):
                     payload={}))
             event = Towers.objects.all()
             nearest = distance(event, [lat, lon])
-
             response = air_pollution_weekly(nearest.stationsSelect,
                                             nearest.locationsSelect)
             return JsonResponse(dict(status=200,
