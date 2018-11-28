@@ -765,9 +765,6 @@ class AirPollutionGeneric(generics.CreateAPIView):
                 status=400, message="Key missing", payload={}))
 
 
-
-
-
 class AirPollutionWeekGeneric(generics.CreateAPIView):
     queryset = AirPollution.objects.all()
     serializer_class = AirPollutionSerializer
@@ -793,7 +790,7 @@ class AirPollutionWeekGeneric(generics.CreateAPIView):
             nearest = distance(event, [lat, lon])
 
             response = air_pollution_weekly(nearest.stationsSelect,
-                                        nearest.locationsSelect)
+                                            nearest.locationsSelect)
             return JsonResponse(dict(status=200,
                                      message="success",
                                      payload=response))
