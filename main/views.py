@@ -37,15 +37,17 @@ def distance(data, points):
     :param points: current location lat long
     :return: nearest tower
     """
-    import pdb;pdb.set_trace()
-    min_dist = 99999
+    min_dist = 99999.00
     resp = ()
     latitude = float(points[0])
     longitude = float(points[1])
     for i in range(len(data)):
         vals = data[i]
+        print vals
         dist = (vals.latitude - latitude) ** 2 + (vals.longitude - longitude) ** 2
+        print dist
         eucd = math.sqrt(dist)
+        print eucd
         if eucd < min_dist:
             min_dist = eucd
             resp = vals
