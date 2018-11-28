@@ -707,6 +707,37 @@ class AirPollutionGeneric(generics.CreateAPIView):
                 status=400, message="Key missing", payload={}))
 
 
+def pollutant_list():
+    levels = ['Severe', 'Very Poor', 'Poor', 'Moderately Polluted',
+              'Satisfactory', 'Good']
+    response = []
+    for l in levels:
+        pm10_quality = AirQuality.objects.get(name=l, pm_type='PM10')
+        pm25_quality = AirQuality.objects.get(name=l, pm_type='PM25')
+        response.append(
+            dict(
+                pm25_value="{}-{}".format(pm25_quality.minimum, pm25_quality.maximum) if pm25_quality.minimum < 251 else "> {}".format(pm25_quality.minimum),
+                pm10_value="{}-{}".format(pm10_quality.minimum, pm10_quality.maximum) if pm10_quality.minimum < 431 else "> {}".format(pm10_quality.minimum),
+                color_code = pm10_quality.color_code,
+                name=pm10_quality.name
+            )
+        )
+            # dict(
+            #     pm10=dict(maximum=pm10_quality.maximum,
+            #               minimum=pm10_quality.minimum,
+            #               name=pm10_quality.name,
+            #               color=pm10_quality.color_code
+            #               ),
+            #     pm25=dict(maximum=pm25_quality.maximum,
+            #               minimum=pm25_quality.minimum,
+            #               name=pm25_quality.name,
+            #               color=pm25_quality.color_code
+            #               )
+            # )
+        # )
+    return response
+
+
 class AirPollutionWeekGeneric(generics.CreateAPIView):
     queryset = AirPollution.objects.all()
     serializer_class = AirPollutionSerializer
@@ -730,93 +761,90 @@ class AirPollutionWeekGeneric(generics.CreateAPIView):
                     payload={}))
             event = Towers.objects.all()
             nearest = nearest_tower(event, lat, lon)
-            response_data = []
+            pm10_list = []
+            pm25_list = []
+            current = datetime.datetime.now().date()
+            last_week = current - datetime.timedelta(days=5)
             if nearest == "ENV1":
                 url = "http://www.envirotechlive.com/app/ajax_cpcb.php"
-                for i in range(1,8):
+                for i in range(1, 5):
+                    dates = last_week + datetime.timedelta(days=i)
+                    date_str = dates.strftime("%d-%m-%Y")
                     querystring = {"method": "requestStationReport",
-                                   "quickReportType": "last7days",
+                                   "quickReportType": "null",
                                    "isMultiStation": "1",
                                    "stationType": "aqmsp",
-                                   "pagenum": i,"pagesize": "50",
+                                   "pagenum": "1", "pagesize": "50",
                                    "infoTypeRadio": "grid",
                                    "graphTypeRadio": "line",
                                    "exportTypeRadio": "csv",
-                                   "timeBase": "1hour",
+                                   "fromDate": "{} 00:00".format(date_str),
+                                   "toDate": "{} 23:59".format(date_str),
+                                   "timeBase": "24hours",
                                    "valueTypeRadio": "normal",
                                    "timeBaseQuick": "24hours",
-                                   "locationsSelect": "168",
+                                   "locationsSelect": "169",
                                    "stationsSelect": "283",
-                                   "channelNos_283[]": ["1", "2"]
-                                   }
+                                   "channelNos_284[]": ["1", "2"]}
 
                     response = requests.request("GET", url, params=querystring)
                     data = response.json()
 
                     if len(data['data']) > 0:
-                        response_data.append(data['data'])
+                        average = data['avgminmax']
+                        pm10_list.append(dict(
+                            date=date_str,
+                            maximum=average['max'][0],
+                            minimum=average['min'][0]
+                        ))
+                        pm25_list.append(dict(
+                            date=date_str,
+                            maximum=average['max'][1],
+                            minimum=average['min'][1]
+                        ))
             else:
                 url = "http://www.envirotechlive.com/app/ajax_cpcb.php"
-
-                for i in range(1, 8):
+                for i in range(1, 5):
+                    dates = last_week + datetime.timedelta(days=i)
+                    date_str = dates.strftime("%d-%m-%Y")
                     querystring = {"method": "requestStationReport",
-                                   "quickReportType": "last7days",
+                                   "quickReportType": "null",
                                    "isMultiStation": "1",
-                                   "stationType": "aqmsp", "pagenum": i,
-                                   "pagesize": "50","infoTypeRadio": "grid",
+                                   "stationType": "aqmsp",
+                                   "pagenum": "1", "pagesize": "50",
+                                   "infoTypeRadio": "grid",
                                    "graphTypeRadio": "line",
                                    "exportTypeRadio": "csv",
-                                   "timeBase": "1hour",
+                                   "fromDate": "{} 00:00".format(date_str),
+                                   "toDate": "{} 23:59".format(date_str),
+                                   "timeBase": "24hours",
                                    "valueTypeRadio": "normal",
                                    "timeBaseQuick": "24hours",
-                                   "locationsSelect": "168",
+                                   "locationsSelect": "169",
                                    "stationsSelect": "284",
-                                   "channelNos_284[]": ["1", "2"]
-                                   }
+                                   "channelNos_284[]": ["1", "2"]}
 
                     response = requests.request("GET", url, params=querystring)
                     data = response.json()
+
                     if len(data['data']) > 0:
-                        response_data.append(data['data'])
-            resp = []
-            for d in response_data:
-                values = d.values()
-                keys = d.keys()
-                if len(keys) == 1:
-                    keys, values = keys[0], values[0]
-                    date = keys.split(" ")[0]
-                    pm25 = values[1]
-                    pm10 = values[0]
-                    # resp.append({"date": date, "pm25":pm25,
-                    #              "pm10": pm10,"color": color_return(pm10)})
-                    resp.append(dict(
-                        pm25=dict(date=date, value=pm25, color=color_return_pm25(pm25)),
-                        pm10=dict(date=date, value=pm10, color=color_return_pm10(pm10)),
-                    ))
-                else:
-                    keys1, values1 = keys[0], values[0]
-                    date = keys1.split(" ")[0]
-                    pm25 = values1[1]
-                    pm10 = values1[0]
-                    resp.append(dict(
-                        pm25=dict(date=date, value=pm25,
-                                  color=color_return_pm25(pm25)),
-                        pm10=dict(date=date, value=pm10,
-                                  color=color_return_pm10(pm10)),
-                    ))
-                    key, value = keys[1], values[1]
-                    date = key.split(" ")[0]
-                    pm25 = value[1]
-                    pm10 = value[0]
-                    resp.append(dict(
-                        pm25=dict(date=date, value=pm25,
-                                  color=color_return_pm25(pm25)),
-                        pm10=dict(date=date, value=pm10,
-                                  color=color_return_pm10(pm10)),
-                    ))
+                        average = data['avgminmax']
+                        pm10_list.append(dict(
+                                date=date_str,
+                                maximum=average['max'][0],
+                                minimum=average['min'][0]
+                            ))
+                        pm25_list.append(dict(
+                            date=date_str,
+                            maximum=average['max'][1],
+                            minimum=average['min'][1]
+                        ))
+
             return JsonResponse(dict(status=200,
                                      message="success",
-                                     payload=resp))
+                                     payload=dict(pm25=pm25_list,
+                                                  pm10=pm10_list,
+                                                  pm_scale=pollutant_list())))
         else:
             return JsonResponse(dict(
                 status=400, message="Key missing", payload={}))
