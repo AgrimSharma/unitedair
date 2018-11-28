@@ -140,7 +140,9 @@ def air_quality_data(locations_select, stations_select):
                    "channelNos_{}[]".format(stations_select): ["1", "2"]}
 
     response = requests.request("GET", url=url, params=querystring)
+    print response.json()
     return response.json()
+
 
 def event_data_web(events):
     """
