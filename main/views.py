@@ -177,9 +177,11 @@ def air_pollution_weekly_static(location):
     for i in range(1, days):
         dates = last_week + datetime.timedelta(days=i)
         date_str = dates.strftime("%d-%m-%Y")
+        tower = Towers.objects.get(stationsSelect=stations_select)
+        print tower
 
         try:
-            data = AirPollutionWeekly.objects.get(pollution_date=dates)
+            data = AirPollutionWeekly.objects.get(pollution_date=dates, tower=tower)
             pm10_list.append(dict(
                 date=date_str,
                 maximum=data.pm10_max,
@@ -214,7 +216,6 @@ def air_pollution_weekly_static(location):
                            "channelNos_{}[]".format(stations_select): ["1", "2"]}
             response = requests.request("GET", url, params=querystring)
             data = response.json()
-            tower = Towers.objects.get(stationsSelect=stations_select)
             if len(data['data']) > 0:
                 average = data['avgminmax']
                 pm10_list.append(dict(

@@ -41,7 +41,10 @@ class UserSubscribeAdmin(admin.ModelAdmin):
 
 
 class AirPollutionLogsAdmin(admin.ModelAdmin):
-    list_display = ["pollution_date", "pm25_max", "pm10_max"]
+    list_display = ["tower_name", "pollution_date", "pm25_max", "pm10_max"]
+
+    def tower_name(self, obj):
+        return obj.tower.location
 
 
 class UserNotificationAdmin(admin.ModelAdmin):
