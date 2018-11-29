@@ -123,7 +123,8 @@ class AirQuality(models.Model):
 class Towers(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
-    location = models.ForeignKey(to=Location, on_delete=models.CASCADE)
+    location = models.CharField(max_length=100)
+    location_name = models.ForeignKey(to=Location, on_delete=models.CASCADE)
     stationsSelect = models.CharField(max_length=1000, null=True, blank=True)
     locationsSelect = models.CharField(max_length=1000, null=True, blank=True)
     created_date = models.DateTimeField(auto_now=True)
@@ -134,10 +135,10 @@ class Towers(models.Model):
         verbose_name_plural = "Towers"
 
     def __unicode__(self):
-        return "{} : {}: {}".format(self.location, self.latitude, self.longitude)
+        return "{} : {}: {}".format(self.location_name.name, self.latitude, self.longitude)
 
     def __str__(self):
-        return "{} : {}: {}".format(self.location, self.latitude, self.longitude)
+        return "{} : {}: {}".format(self.location_name.name, self.latitude, self.longitude)
 
 
 class AirPollution(models.Model):
@@ -152,10 +153,10 @@ class AirPollution(models.Model):
         verbose_name_plural = "Air Pollution"
 
     def __unicode__(self):
-        return "{} : {}: {}".format(self.towers.location, self.pm25, self.pm10)
+        return "{} : {}: {}".format(self.towers.location_name.name, self.pm25, self.pm10)
 
     def __str__(self):
-        return "{} : {}: {}".format(self.towers.location, self.pm25, self.pm10)
+        return "{} : {}: {}".format(self.towers.location_name.name, self.pm25, self.pm10)
 
 
 class Registration(models.Model):

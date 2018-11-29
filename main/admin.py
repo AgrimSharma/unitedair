@@ -25,8 +25,10 @@ class AirQualityAdmin(admin.ModelAdmin):
 
 class AirPollutionAdmin(admin.ModelAdmin):
     raw_id_fields = ['towers']
-    list_display = ["towers", "pm10", "pm25"]
+    list_display = ["tower_name", "pm10", "pm25"]
 
+    def tower_name(self, obj):
+        return obj.towers.location_name.name
 
 class TowerAdmin(admin.ModelAdmin):
     list_display = ["location", "latitude", "longitude"]
@@ -48,7 +50,7 @@ class AirPollutionLogsAdmin(admin.ModelAdmin):
     list_display = ["tower_name", "pollution_date", "pm25_max", "pm10_max"]
 
     def tower_name(self, obj):
-        return obj.tower.location
+        return obj.tower.location_name.name
 
 
 class UserNotificationAdmin(admin.ModelAdmin):

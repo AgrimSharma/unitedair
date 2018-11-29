@@ -13,8 +13,9 @@ import requests
 from math import sin, cos, sqrt, atan2, radians
 import re
 
-location_first = ["Golf Course", "DLF Cyber Hub", "Udyog Vihar Phase - 4"]
-location_second = ["Arjan Garh", "Sector 7, Gurgaon", "Ambaince Mall, Gurgaon"]
+# loc_gur = Location.
+# location_first = []
+# location_second = ["Arjan Garh", "Sector 7, Gurgaon", "Ambaince Mall, Gurgaon"]
 
 
 def isValidEmail(email):
@@ -164,6 +165,9 @@ def air_pollution_weekly_static(location):
     current = datetime.datetime.now().date()
     days = 6
     last_week = current - datetime.timedelta(days=days)
+    location_first = [1, 2, 3, 6]
+    location_second = [4, 5, 7, 8]
+    location = int(location)
     if location in location_first:
         locations_select = 168
         stations_select = 283
@@ -248,6 +252,9 @@ def air_pollution_weekly_static(location):
 
 
 def air_quality_static(location):
+    location_first = [1, 2, 3, 6]
+    location_second = [4, 5, 7, 8]
+    location = int(location)
     if location in location_first:
         locations_select = 168
         stations_select = 283
