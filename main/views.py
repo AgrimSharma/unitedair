@@ -166,11 +166,12 @@ def air_pollution_weekly_static(location):
     days = 5
     last_week = current - datetime.timedelta(days=days)
     location_first = [1, 2, 3, 6]
-    location_second = [4, 5, 7, 8]
+    # location_second = [4, 5, 7, 8]
     if location == "":
-        locations_select = 168
-        stations_select = 283
-    elif int(location) in location_first:
+        location = 1
+    else:
+        location = int(location)
+    if location in location_first:
         locations_select = 168
         stations_select = 283
     else:
@@ -184,7 +185,8 @@ def air_pollution_weekly_static(location):
         print tower
 
         try:
-            data = AirPollutionWeekly.objects.get(pollution_date=dates, tower=tower)
+            data = AirPollutionWeekly.objects.get(pollution_date=dates,
+                                                  tower=tower)
             pm10_list.append(dict(
                 date=date_str,
                 maximum=data.pm10_max,
@@ -254,9 +256,10 @@ def air_quality_static(location):
     location_first = [1, 2, 3, 6]
     # location_second = [4, 5, 7, 8]
     if location == "":
-        locations_select = 168
-        stations_select = 283
-    elif location in location_first:
+        location = 1
+    else:
+        location = int(location)
+    if location in location_first:
         locations_select = 168
         stations_select = 283
     else:
@@ -266,22 +269,19 @@ def air_quality_static(location):
     current_ct = datetime.datetime.now().strftime("%d-%m-%Y %H:%M")
     url = "http://www.envirotechlive.com/app/ajax_cpcb.php"
 
-    querystring = {"method": "requestStationReport",
-                   "quickReportType": "today",
+    querystring = {"method": "requestStationReport", "quickReportType": "null",
                    "isMultiStation": "1", "stationType": "aqmsp",
-                   "pagenum": "1", "pagesize": "50",
-                   "infoTypeRadio": "grid",
-                   "graphTypeRadio": "line",
-                   "exportTypeRadio": "csv",
+                   "lastDataDate": "{} 00:00:00".format(current), "pagenum": "1",
+                   "pagesize": "50", "infoTypeRadio": "grid",
+                   "graphTypeRadio": "line", "exportTypeRadio": "csv",
                    "fromDate": "{} 00:00".format(current),
-                   "toDate": current_ct,
-                   "timeBase": "1hour", "valueTypeRadio": "normal",
-                   "timeBaseQuick": "24hours",
-                   "locationsSelect": locations_select,
-                   "stationsSelect": stations_select,
+                   "toDate": current_ct, "timeBase": "24hours",
+                   "valueTypeRadio": "normal", "timeBaseQuick": "5min",
+                   "locationsSelect": locations_select, "stationsSelect": stations_select,
                    "channelNos_{}[]".format(stations_select): ["1", "2"]}
 
     response = requests.request("GET", url=url, params=querystring)
+    print stations_select, response.json()
     return response.json()
 
 
