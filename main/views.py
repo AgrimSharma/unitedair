@@ -167,7 +167,6 @@ def air_pollution_weekly_static(location):
     last_week = current - datetime.timedelta(days=days)
     location_first = [1, 2, 3, 6]
     location_second = [4, 5, 7, 8]
-    location = int(location)
     if location in location_first:
         locations_select = 168
         stations_select = 283
@@ -254,7 +253,6 @@ def air_pollution_weekly_static(location):
 def air_quality_static(location):
     location_first = [1, 2, 3, 6]
     location_second = [4, 5, 7, 8]
-    location = int(location)
     if location in location_first:
         locations_select = 168
         stations_select = 283
