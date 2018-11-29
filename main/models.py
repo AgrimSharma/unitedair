@@ -249,3 +249,22 @@ class ExtraFields(models.Model):
 
     def __str__(self):
         return "{} : {} : {}".format(self.air_quality, self.display_text, self.display_image)
+
+
+class AirPollutionCurrent(models.Model):
+    pollution_date = models.DateField()
+    pm25 = models.FloatField()
+    pm10 = models.FloatField()
+    tower = models.ForeignKey(to=Towers, on_delete=models.CASCADE)
+    created_date = models.DateField(auto_now=True)
+
+    class Meta:
+        ordering = ('-pollution_date',)
+        verbose_name = "Air Pollution Current"
+        verbose_name_plural = "Air Pollution Current"
+
+    def __unicode__(self):
+        return "{} : {} : {} : {}".format(self.pollution_date, self.pm25, self.pm10, self.tower.location)
+
+    def __str__(self):
+        return "{} : {} : {} : {}".format(self.pollution_date, self.pm25, self.pm10, self.tower.location)

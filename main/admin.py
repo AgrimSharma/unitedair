@@ -60,6 +60,13 @@ class AirPollutionLogsAdmin(admin.ModelAdmin):
         return obj.tower.location_name.name
 
 
+class AirPollutionCurrentAdmin(admin.ModelAdmin):
+    list_display = ["tower_name", "pollution_date", "pm25", "pm10"]
+
+    def tower_name(self, obj):
+        return obj.tower.location_name.name
+
+
 class UserNotificationAdmin(admin.ModelAdmin):
     list_display = ["device", "events", "device_type"]
 
@@ -88,6 +95,7 @@ admin.site.register(AirQuality, AirQualityAdmin)
 admin.site.register(Location, LocationAdmin)
 admin.site.register(Registration, RegistrationAdmin)
 admin.site.register(UserNotification, UserNotificationAdmin)
+admin.site.register(AirPollutionCurrent, AirPollutionCurrentAdmin)
 admin.site.register(AirPollution, AirPollutionAdmin)
 admin.site.register(AirPollutionWeekly, AirPollutionLogsAdmin)
 admin.site.register(Towers, TowerAdmin)

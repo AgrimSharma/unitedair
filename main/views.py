@@ -281,8 +281,7 @@ def air_quality_static(location):
                    "channelNos_{}[]".format(stations_select): ["1", "2"]}
 
     response = requests.request("GET", url=url, params=querystring)
-    print stations_select, response.json()
-    return response.json()
+    return response.json(), stations_select
 
 
 def air_quality_data(stations_select, locations_select):
@@ -894,7 +893,7 @@ class AirPollutionGeneric(generics.CreateAPIView):
             # nearest = distance(event, [lat, lon])
             # response = air_quality_data(nearest.stationsSelect,
             #                             nearest.locationsSelect)
-            data = air_quality_static(location)
+            data, station_select = air_quality_static(location)
             channels = data['avgminmax']['max']
             location = Location.objects.all()
             images = AirQuality.objects.get(name=quality_return_pm10(
@@ -904,29 +903,73 @@ class AirPollutionGeneric(generics.CreateAPIView):
                      preference_image="http://103.91.90.242:8000/static/images/tips/{}".format(e.display_image))
                 for e in images.extrafields_set.all()
             ]
-
+            tower = Towers.objects.get(stationsSelect=station_select)
+            try:
+                poll = AirPollutionCurrent.objects.get(pollution_date=datetime.datetime.now().date(),
+                                                        tower=tower)
+                if channels[0] != poll.pm10 or channels[1] != poll.pm25:
+                    poll.pm10 = float(channels[0])
+                    poll.pm25 = float(channels[1])
+                    response = {
+                        "PM10":
+                            dict(
+                                value=poll.pm10,
+                                color=color_return_pm10(
+                                    poll.pm10),
+                                quality=quality_return_pm10(
+                                    poll.pm10)),
+                        "PM25": dict(
+                            value=poll.pm25,
+                            color=color_return_pm25(
+                                poll.pm25),
+                            quality=quality_return_pm25(
+                                poll.pm25)),
+                        "health_precaution": health_precaution,
+                        "area_list": [dict(name=e.name, id=e.id) for e in
+                                      location]
+                    }
+                else:
+                    response = {
+                                 "PM10":
+                                     dict(
+                                        value=channels[0],
+                                        color=color_return_pm10(
+                                            channels[0]),
+                                        quality=quality_return_pm10(
+                                            channels[0])),
+                                 "PM25":dict(
+                                     value=channels[1],
+                                     color=color_return_pm25(
+                                         channels[1]),
+                                     quality=quality_return_pm25(
+                                         channels[1])),
+                                 "health_precaution": health_precaution,
+                                 "area_list":[dict(name=e.name,id=e.id) for e in  location]
+                             }
+            except Exception:
+                response = {
+                    "PM10":
+                        dict(
+                            value=channels[0],
+                            color=color_return_pm10(
+                                channels[0]),
+                            quality=quality_return_pm10(
+                                channels[0])),
+                    "PM25": dict(
+                        value=channels[1],
+                        color=color_return_pm25(
+                            channels[1]),
+                        quality=quality_return_pm25(
+                            channels[1])),
+                    "health_precaution": health_precaution,
+                    "area_list": [dict(name=e.name, id=e.id) for e in location]
+                }
+                AirPollutionCurrent.objects.create(
+                    pollution_date=datetime.datetime.now().date(),
+                    tower=tower, pm10=channels[0], pm25=channels[1])
             return JsonResponse(dict(status=200,
                                      message="success",
-                                     payload={
-                                         "PM10":
-                                             dict(
-                                                value=channels[0],
-                                                color=color_return_pm10(
-                                                    channels[0]),
-                                                quality=quality_return_pm10(
-                                                    channels[0])),
-                                         "PM25":dict(
-                                             value=channels[1],
-                                             color=color_return_pm25(
-                                                 channels[1]),
-                                             quality=quality_return_pm25(
-                                                 channels[1])),
-                                         "health_precaution": health_precaution,
-                                         "area_list":[dict(name=e.name,id=e.id) for e in  location]
-                                         # "area_list": location_first + location_second
-                                         # "distance": distance_between( [lat, lon], nearest)
-
-                                     }
+                                     payload=response
                                      ))
         else:
             return JsonResponse(dict(
