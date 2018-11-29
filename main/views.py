@@ -163,19 +163,19 @@ def air_pollution_weekly_static(location):
     pm10_list = []
     pm25_list = []
     current = datetime.datetime.now().date()
-    days = 6
+    days = 5
     last_week = current - datetime.timedelta(days=days)
     location_first = [1, 2, 3, 6]
     location_second = [4, 5, 7, 8]
-    if location in location_first:
+    if location == "":
         locations_select = 168
         stations_select = 283
-    elif location in location_second:
+    elif int(location) in location_first:
+        locations_select = 168
+        stations_select = 283
+    else:
         locations_select = 169
         stations_select = 284
-    else:
-        locations_select = 168
-        stations_select = 283
     url = "http://www.envirotechlive.com/app/ajax_cpcb.php"
     for i in range(1, days):
         dates = last_week + datetime.timedelta(days=i)
@@ -252,16 +252,16 @@ def air_pollution_weekly_static(location):
 
 def air_quality_static(location):
     location_first = [1, 2, 3, 6]
-    location_second = [4, 5, 7, 8]
-    if location in location_first:
+    # location_second = [4, 5, 7, 8]
+    if location == "":
         locations_select = 168
         stations_select = 283
-    elif location in location_second:
+    elif location in location_first:
+        locations_select = 168
+        stations_select = 283
+    else:
         locations_select = 169
         stations_select = 284
-    else:
-        locations_select = 168
-        stations_select = 283
     current = datetime.datetime.now().date().strftime("%d-%m-%Y")
     current_ct = datetime.datetime.now().strftime("%d-%m-%Y %H:%M")
     url = "http://www.envirotechlive.com/app/ajax_cpcb.php"
