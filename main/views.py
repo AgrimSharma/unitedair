@@ -703,7 +703,8 @@ class BlogCategoryGeneric(generics.CreateAPIView):
                         "id": e.id,
                         "name": e.name,
                         "image": e.blog_image,
-                        "blog_count": blog.count()
+                        "blog_count": blog.count(),
+                        "color_code": blog.color_code
                     }
                 )
             return JsonResponse(dict(status=200,
