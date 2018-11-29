@@ -19,8 +19,14 @@ class BlogCategoryAdmin(admin.ModelAdmin):
     list_display = ["name", "blog_image", "created_date"]
 
 
+class ExtraFieldAdmin(admin.TabularInline):
+    model = ExtraFields
+    extra = 0
+
+
 class AirQualityAdmin(admin.ModelAdmin):
     list_display = ["pm_type", "name", "minimum", "maximum"]
+    inlines = (ExtraFieldAdmin,)
 
 
 class AirPollutionAdmin(admin.ModelAdmin):
@@ -29,6 +35,7 @@ class AirPollutionAdmin(admin.ModelAdmin):
 
     def tower_name(self, obj):
         return obj.towers.location_name.name
+
 
 class TowerAdmin(admin.ModelAdmin):
     list_display = ["location", "latitude", "longitude"]

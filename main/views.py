@@ -450,17 +450,17 @@ def quality_return_pm25(val):
     """
     val = float(val)
     if 0.0 <= val < 30.0:
-        return 'GOOD'.lower()
+        return 'Good'.lower()
     elif 31.0 <= val <= 60.0:
-        return 'SATISFACTORY'.lower()
+        return 'Satisfactory'.lower()
     elif 61.0 <= val <= 90.0:
-        return 'MODERATE'.lower()
+        return 'Moderately Polluted'.lower()
     elif 91.0 <= val <= 120.0:
-        return 'POOR'.lower()
+        return 'Poor'.lower()
     elif 121.0 <= val <= 250.0:
-        return 'VERY POOR'.lower()
+        return 'Very Poor'.lower()
     else:
-        return 'SEVERELY POLLUTED'.lower()
+        return 'Severe'.lower()
 
 
 def quality_return_pm10(val):
@@ -470,17 +470,17 @@ def quality_return_pm10(val):
     """
     val = float(val)
     if 0.0 <= val < 50.0:
-        return 'GOOD'.lower()
+        return 'Good'.lower()
     elif 51.0 <= val <= 100.0:
-        return 'SATISFACTORY'.lower()
+        return 'Satisfactory'.lower()
     elif 101.0 <= val <= 250.0:
-        return 'MODERATE'.lower()
+        return 'Moderately Polluted'.lower()
     elif 251.0 <= val <= 350.0:
-        return 'POOR'.lower()
+        return 'Poor'.lower()
     elif 351.0 <= val <= 430.0:
-        return 'VERY POOR'.lower()
+        return 'Very Poor'.lower()
     else:
-        return 'SEVERELY POLLUTED'.lower()
+        return 'Severe'.lower()
 
 
 def quality_color(quality):
@@ -897,6 +897,14 @@ class AirPollutionGeneric(generics.CreateAPIView):
             data = air_quality_static(location)
             channels = data['avgminmax']['max']
             location = Location.objects.all()
+            images = AirQuality.objects.get(name=quality_return_pm10(
+                                                    channels[0]).capitalize(), pm_type="PM10")
+            health_precaution = [
+                dict(preference_text=e.display_text,
+                     preference_image="http://103.91.90.242:8000/static/images/tips/{}".format(e.display_image))
+                for e in images.extrafields_set.all()
+            ]
+
             return JsonResponse(dict(status=200,
                                      message="success",
                                      payload={
@@ -913,18 +921,7 @@ class AirPollutionGeneric(generics.CreateAPIView):
                                                  channels[1]),
                                              quality=quality_return_pm25(
                                                  channels[1])),
-                                         "health_precaution": [
-                                             dict(
-
-                                                 preference_image="https://d943jm6rlnzra.cloudfront.net/wp-content/uploads/2016/10/02062149/5.png",
-                                                 preference_text="Test Text1"
-                                         ),
-                                             dict(
-
-                                                 preference_image="http://iconsetc.com/icons-watermarks/flat-circle-white-on-blue/sports/sports_running-3/sports_running-3_flat-circle-white-on-blue_512x512.png",
-                                                 preference_text="Test Text1"
-                                             )
-                                         ],
+                                         "health_precaution": health_precaution,
                                          "area_list":[dict(name=e.name,id=e.id) for e in  location]
                                          # "area_list": location_first + location_second
                                          # "distance": distance_between( [lat, lon], nearest)

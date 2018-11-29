@@ -219,6 +219,7 @@ class AirPollutionWeekly(models.Model):
     pm10_max = models.FloatField()
     pm10_min = models.FloatField()
     tower = models.ForeignKey(to=Towers, on_delete=models.CASCADE)
+    created_date = models.DateField(auto_now=True)
 
     class Meta:
         ordering = ('-pollution_date',)
@@ -230,3 +231,21 @@ class AirPollutionWeekly(models.Model):
 
     def __str__(self):
         return "{} : {} : {} : {}".format(self.pollution_date, self.pm25_max, self.pm10_max, self.tower.location)
+
+
+class ExtraFields(models.Model):
+    display_text = models.CharField(max_length=1000)
+    display_image = models.CharField(max_length=1000)
+    air_quality = models.ForeignKey(to=AirQuality, on_delete=models.CASCADE)
+    created_date = models.DateField(auto_now=True)
+
+    class Meta:
+        ordering = ('-created_date',)
+        verbose_name = "Air Quality Extra Fields"
+        verbose_name_plural = "Air Quality Extra Fields"
+
+    def __unicode__(self):
+        return "{} : {} : {}".format(self.air_quality, self.display_text, self.display_image)
+
+    def __str__(self):
+        return "{} : {} : {}".format(self.air_quality, self.display_text, self.display_image)
