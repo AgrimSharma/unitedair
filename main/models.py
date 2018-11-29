@@ -4,6 +4,22 @@ from __future__ import unicode_literals
 from django.db import models
 
 
+class Location(models.Model):
+    name = models.TextField(max_length=1000)
+    created_date = models.DateField(auto_now=True)
+
+    class Meta:
+        ordering = ('-name',)
+        verbose_name = "Location"
+        verbose_name_plural = "Location"
+
+    def __unicode__(self):
+        return "{}".format(self.name)
+
+    def __str__(self):
+        return "{}".format(self.name)
+
+
 class Events(models.Model):
     heading = models.CharField(max_length=1000)
     description = models.TextField(max_length=2000)
@@ -13,6 +29,7 @@ class Events(models.Model):
     event_address = models.CharField(max_length=2000)
     latitude = models.FloatField()
     longitude = models.FloatField()
+    location = models.ForeignKey(to=Location, on_delete=models.CASCADE)
     created_date = models.DateTimeField(auto_now=True)
     updated_date = models.DateTimeField(auto_now=True)
 
@@ -106,7 +123,7 @@ class AirQuality(models.Model):
 class Towers(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
-    location = models.CharField(max_length=1000)
+    location = models.ForeignKey(to=Location, on_delete=models.CASCADE)
     stationsSelect = models.CharField(max_length=1000, null=True, blank=True)
     locationsSelect = models.CharField(max_length=1000, null=True, blank=True)
     created_date = models.DateTimeField(auto_now=True)

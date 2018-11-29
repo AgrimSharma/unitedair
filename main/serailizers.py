@@ -110,9 +110,9 @@ class UserSubscribeSerializer(serializers.ModelSerializer):
 class UserNotificationSerializer(serializers.ModelSerializer):
     device_id = serializers.CharField(required=True, help_text=_("device_id"))
     device_type = serializers.CharField(required=True, help_text=_("device_type"))
-    lat = serializers.CharField(required=True, help_text=_("Latitude"))
-    lon = serializers.CharField(required=True, help_text=_("Longitude"))
+    location_id = serializers.CharField(required=True, help_text=_("location_id"))
+    # lon = serializers.CharField(required=True, help_text=_("Longitude"))
 
     class Meta:
         model = UserNotification
-        fields = ["device_id", "lat", "lon"]
+        fields = ["device_id", "location_id", "device_type"]

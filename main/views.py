@@ -357,7 +357,9 @@ def event_data(events, page_no):
                 event_time=e.event_time,
                 event_address=e.event_address,
                 latitude=e.latitude,
-                longitude=e.longitude
+                longitude=e.longitude,
+                event_location=e.location.name,
+                event_location_id = e.location.id
             )
         )
 
@@ -625,6 +627,8 @@ class EventDetailGeneric(generics.CreateAPIView):
                 event_date=event.event_date,
                 event_time=event.event_time,
                 event_address=event.event_address,
+                event_location=event.location.name,
+                event_location_id=event.location.id,
                 latitude=event.latitude,
                 longitude=event.longitude,
                 number_interested_users=interested.count(),
@@ -887,6 +891,7 @@ class AirPollutionGeneric(generics.CreateAPIView):
             #                             nearest.locationsSelect)
             data = air_quality_static(location)
             channels = data['avgminmax']['max']
+            location = Location.objects.all()
             return JsonResponse(dict(status=200,
                                      message="success",
                                      payload={
@@ -915,7 +920,8 @@ class AirPollutionGeneric(generics.CreateAPIView):
                                                  preference_text="Test Text1"
                                              )
                                          ],
-                                         "area_list": location_first + location_second
+                                         "area_list":[dict(name=e.name,id=e.id) for e in  location]
+                                         # "area_list": location_first + location_second
                                          # "distance": distance_between( [lat, lon], nearest)
 
                                      }
@@ -1127,19 +1133,21 @@ class NotificationGeneric(generics.CreateAPIView):
             try:
                 if request.data:
                     device_id = request.data['device_id']
-                    lat = request.data['lat']
-                    lon = request.data['lon']
+                    location_id = request.data['location_id']
+                    # lon = request.data['lon']
                     device_type = request.data['device_type']
                 else:
                     device_id = request.POST.get('device_id', "")
-                    lat = request.POST.get('lat', "")
-                    lon = request.POST.get('lon', "")
+                    location_id = request.POST.get('location_id', "")
+                    # lon = request.POST.get('lon', "")
                     device_type = request.POST.get('device_type', "")
             except Exception:
                 return JsonResponse(dict(
                     status=400, message="All key are mandatory", payload={}))
             push_service = FCMNotification(api_key=settings.FIRE_BASE_API_KEY)
-            events = Events.objects.filter(latitude__lte=lat, longitude__lte=lon)
+            location = Location.objects.get(id=location_id)
+            # events = Events.objects.filter(latitude__lte=lat, longitude__lte=lon)
+            events = Events.objects.filter(location=location)
             for e in events:
                 try:
                     user_dev = UserNotification.objects.get(
