@@ -740,9 +740,13 @@ class BlogCategoryListGeneric(generics.CreateAPIView):
                     payload={}))
             blog = Blog.objects.filter(
                 category=blog_category).order_by("-created_date")
+            blogs_data = blog_data(blog, page_no=page_no)
             return JsonResponse(dict(status=200,
                                      message="success",
-                                     payload=blog_data(blog, page_no=page_no)))
+                                     payload=
+                                     dict(blogs=blogs_data,
+                                          total_blogs=len(blogs_data)
+                                          )))
         else:
             return JsonResponse(dict(
                 status=400, message="Key missing", payload={}))
