@@ -745,7 +745,7 @@ class BlogCategoryListGeneric(generics.CreateAPIView):
                                      message="success",
                                      payload=
                                      dict(blogs=blogs_data,
-                                          total_blogs=len(blogs_data)
+                                          total_blogs=len(blog)
                                           )))
         else:
             return JsonResponse(dict(
