@@ -240,7 +240,7 @@ def day_wise_data(days, locations_select, stations_select):
 
 def air_pollution_weekly_static(location):
 
-    days = 5
+    days = 7
     location_first = [1, 2, 3, 6]
     # location_second = [4, 5, 7, 8]
     if location == "":
@@ -254,10 +254,19 @@ def air_pollution_weekly_static(location):
         locations_select = 169
         stations_select = 284
     pm25_list, pm10_list, pm_scale = day_wise_data(days, locations_select, stations_select)
-    if len(pm25_list) < 4 or len(pm10_list) < 4:
-        days = days + (days - len(pm25_list)) - 1
-        pm25_list, pm10_list, pm_scale = day_wise_data(days, locations_select,
-                                                       stations_select)
+    print pm25_list
+    if len(pm25_list) > 4:
+        pm10_list = pm10_list[2:]
+        pm25_list = pm25_list[2:]
+    else:
+        left_pm10 = 7 - len(pm10_list)
+        left_pm25 = 7 - len(pm25_list)
+        pm10_list = pm10_list
+        pm25_list = pm25_list
+    # if len(pm25_list) < 4 or len(pm10_list) < 4:
+    #     days = days + (days - len(pm25_list)) - 1
+    #     pm25_list, pm10_list, pm_scale = day_wise_data(days, locations_select,
+    #                                                    stations_select)
     return dict(pm25=pm25_list,
                 pm10=pm10_list,
                 pm_scale=pollutant_list())
