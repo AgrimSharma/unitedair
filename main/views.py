@@ -255,7 +255,7 @@ def air_pollution_weekly_static(location):
         stations_select = 284
     pm25_list, pm10_list, pm_scale = day_wise_data(days, locations_select, stations_select)
     if len(pm25_list) < 4 or len(pm10_list) < 4:
-        days = 4 + (4 - len(pm25_list))
+        days = days + (days - len(pm25_list))
         pm25_list, pm10_list, pm_scale = day_wise_data(days, locations_select,
                                                        stations_select)
     return dict(pm25=pm25_list,
