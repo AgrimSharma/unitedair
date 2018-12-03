@@ -392,7 +392,7 @@ def blog_data(events, page_no):
                 heading=e.heading,
                 description=e.description,
                 event_image=e.blog_image,
-                create_date=e.created_date.strftime("%d-%m-%y"),
+                create_date=e.created_date,
             )
         )
 
