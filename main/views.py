@@ -785,7 +785,7 @@ class BlogDetailGeneric(generics.CreateAPIView):
                                         heading=blog_category.heading,
                                         description=blog_category.description,
                                         event_image=blog_category.blog_image,
-                                        create_date=blog_category.created_date,
+                                        create_date=blog_category.created_date.strftime("%d-%m-%Y"),
                                                 )))
         else:
             return JsonResponse(dict(
