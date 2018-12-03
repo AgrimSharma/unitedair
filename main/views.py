@@ -159,31 +159,19 @@ def air_pollution_weekly(stations_select, locations_select):
                 pm_scale=pollutant_list())
 
 
-def air_pollution_weekly_static(location):
+def day_wise_data(days, locations_select, stations_select):
     pm10_list = []
     pm25_list = []
-    current = datetime.datetime.now().date()
-    days = 5
-    last_week = current - datetime.timedelta(days=days)
-    location_first = [1, 2, 3, 6]
-    # location_second = [4, 5, 7, 8]
-    if location == "":
-        location = 1
-    else:
-        location = int(location)
-    if location in location_first:
-        locations_select = 168
-        stations_select = 283
-    else:
-        locations_select = 169
-        stations_select = 284
     url = "http://www.envirotechlive.com/app/ajax_cpcb.php"
+
+    current = datetime.datetime.now().date()
+
+    last_week = current - datetime.timedelta(days=days)
+
     for i in range(1, days):
         dates = last_week + datetime.timedelta(days=i)
         date_str = dates.strftime("%d-%m-%Y")
         tower = Towers.objects.get(stationsSelect=stations_select)
-        print tower
-
         try:
             data = AirPollutionWeekly.objects.get(pollution_date=dates,
                                                   tower=tower)
@@ -247,6 +235,31 @@ def air_pollution_weekly_static(location):
                     tower=tower
                 )
 
+    return dict(pm25=pm25_list,
+                pm10=pm10_list,
+                pm_scale=pollutant_list())
+
+
+def air_pollution_weekly_static(location):
+
+    days = 5
+    location_first = [1, 2, 3, 6]
+    # location_second = [4, 5, 7, 8]
+    if location == "":
+        location = 1
+    else:
+        location = int(location)
+    if location in location_first:
+        locations_select = 168
+        stations_select = 283
+    else:
+        locations_select = 169
+        stations_select = 284
+    pm25_list, pm10_list, pm_scale = day_wise_data(days, locations_select, stations_select)
+    if len(pm25_list) < 4 or len(pm10_list) < 4:
+        days = 4 + (4 - len(pm25_list))
+        pm25_list, pm10_list, pm_scale = day_wise_data(days, locations_select,
+                                                       stations_select)
     return dict(pm25=pm25_list,
                 pm10=pm10_list,
                 pm_scale=pollutant_list())
