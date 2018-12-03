@@ -235,9 +235,7 @@ def day_wise_data(days, locations_select, stations_select):
                     tower=tower
                 )
 
-    return dict(pm25=pm25_list,
-                pm10=pm10_list,
-                pm_scale=pollutant_list())
+    return pm25_list,pm10_list,pollutant_list()
 
 
 def air_pollution_weekly_static(location):
