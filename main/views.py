@@ -360,7 +360,7 @@ def event_data(events, page_no):
                 latitude=e.latitude,
                 longitude=e.longitude,
                 event_location=e.location.name,
-                event_location_id = e.location.id
+                event_location_id=e.location.id
             )
         )
 
@@ -631,7 +631,7 @@ class EventDetailGeneric(generics.CreateAPIView):
                 heading=event.heading,
                 description=event.description,
                 event_image=event.event_image,
-                event_date=event.event_date,
+                event_date=event.event_date.strftime("%d-%m-%Y"),
                 event_time=event.event_time,
                 event_address=event.event_address,
                 event_location=event.location.name,
