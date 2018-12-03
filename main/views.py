@@ -93,15 +93,17 @@ def pollutant_list():
     levels = ['Severe', 'Very Poor', 'Poor', 'Moderately Polluted',
               'Satisfactory', 'Good']
     response = []
-    for l in levels:
-        pm10_quality = AirQuality.objects.get(name=l, pm_type='PM10')
-        pm25_quality = AirQuality.objects.get(name=l, pm_type='PM25')
+    pm10_quality = AirQuality.objects.filter(pm_type='PM10').order_by("minimum")
+    pm25_quality = AirQuality.objects.filter(pm_type='PM25').order_by("minimum")
+    for i in range(len(pm10_quality)):
+        pm10 = pm10_quality[i]
+        pm25 = pm25_quality[i]
         response.append(
             dict(
-                pm25_value="{}-{}".format(pm25_quality.minimum, pm25_quality.maximum) if pm25_quality.minimum < 251 else ">{}".format(pm25_quality.minimum),
-                pm10_value="{}-{}".format(pm10_quality.minimum, pm10_quality.maximum) if pm10_quality.minimum < 431 else ">{}".format(pm10_quality.minimum),
-                color_code = pm10_quality.color_code,
-                name=pm10_quality.name
+                pm25_value="{}-{}".format(pm25.minimum, pm25.maximum) if pm25.minimum < 251 else ">{}".format(pm25.minimum),
+                pm10_value="{}-{}".format(pm10.minimum, pm10.maximum) if pm10.minimum < 431 else ">{}".format(pm10.minimum),
+                color_code = pm10.color_code,
+                name=pm10.name
             )
         )
     return response
