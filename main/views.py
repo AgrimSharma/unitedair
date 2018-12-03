@@ -265,18 +265,15 @@ def air_quality_static(location):
     else:
         locations_select = 169
         stations_select = 284
-    current = datetime.datetime.now().date().strftime("%d-%m-%Y")
-    current_ct = datetime.datetime.now().strftime("%d-%m-%Y %H:%M")
+    # current = datetime.datetime.now().date().strftime("%d-%m-%Y")
+    # current_ct = datetime.datetime.now().strftime("%d-%m-%Y %H:%M")
     url = "http://www.envirotechlive.com/app/ajax_cpcb.php"
 
-    querystring = {"method": "requestStationReport", "quickReportType": "null",
-                   "isMultiStation": "1", "stationType": "aqmsp",
-                   "lastDataDate": "{} 00:00:00".format(current), "pagenum": "1",
-                   "pagesize": "50", "infoTypeRadio": "grid",
-                   "graphTypeRadio": "line", "exportTypeRadio": "csv",
-                   "fromDate": "{} 00:00".format(current),
-                   "toDate": current_ct, "timeBase": "24hours",
-                   "valueTypeRadio": "normal", "timeBaseQuick": "5min",
+    querystring = {"method": "requestRecent", "isMultiStation": "1",
+                   "stationType": "aqmsp", "pagenum": "1", "pagesize": "50",
+                   "infoTypeRadio": "grid", "graphTypeRadio": "line",
+                   "exportTypeRadio": "csv", "timeBase": "24hours",
+                   "valueTypeRadio": "normal", "timeBaseQuick": "24hours",
                    "locationsSelect": locations_select, "stationsSelect": stations_select,
                    "channelNos_{}[]".format(stations_select): ["1", "2"]}
 
@@ -497,6 +494,12 @@ def quality_color(quality):
             if q.maximum < 999 else "> {}".format(q.minimum)
         })
     return response
+
+
+# def fetch_data(data):
+#     pm10_dict = data[0]
+#     pm25_dict = data[1]
+#     return pm10_dict, pm25_dict
 
 
 class EventGeneric(generics.CreateAPIView):
@@ -745,7 +748,8 @@ class BlogCategoryListGeneric(generics.CreateAPIView):
                                      message="success",
                                      payload=
                                      dict(blogs=blogs_data,
-                                          total_blogs=len(blog)
+                                          total_blogs=len(blog),
+                                          page_no=page_no
                                           )))
         else:
             return JsonResponse(dict(
@@ -899,10 +903,11 @@ class AirPollutionGeneric(generics.CreateAPIView):
             # response = air_quality_data(nearest.stationsSelect,
             #                             nearest.locationsSelect)
             data, station_select = air_quality_static(location)
-            channels = data['avgminmax']['max']
+            channels = data[0]['channelsData']
+            pm10_dict, pm25_dict = channels[0], channels[1]
             location = Location.objects.all()
             images = AirQuality.objects.get(name=quality_return_pm10(
-                                                    channels[0]).capitalize(), pm_type="PM10")
+                pm10_dict['ch1max']).capitalize(), pm_type="PM10")
             health_precaution = [
                 dict(preference_text=e.display_text,
                      preference_image="http://103.91.90.242:8000/static/images/tips/{}".format(e.display_image))
@@ -913,8 +918,8 @@ class AirPollutionGeneric(generics.CreateAPIView):
                 poll = AirPollutionCurrent.objects.get(pollution_date=datetime.datetime.now().date(),
                                                         tower=tower)
                 if channels[0] != poll.pm10 or channels[1] != poll.pm25:
-                    poll.pm10 = float(channels[0])
-                    poll.pm25 = float(channels[1])
+                    poll.pm10 = float(pm10_dict['ch1max'])
+                    poll.pm25 = float(pm25_dict['ch2max'])
                     response = {
                         "PM10":
                             dict(
@@ -937,17 +942,17 @@ class AirPollutionGeneric(generics.CreateAPIView):
                     response = {
                                  "PM10":
                                      dict(
-                                        value=channels[0],
+                                        value=pm10_dict['ch1max'],
                                         color=color_return_pm10(
-                                            channels[0]),
+                                            pm10_dict['ch1max']),
                                         quality=quality_return_pm10(
-                                            channels[0])),
+                                            pm10_dict['ch1max'])),
                                  "PM25":dict(
-                                     value=channels[1],
+                                     value=pm25_dict['ch2max'],
                                      color=color_return_pm25(
-                                         channels[1]),
+                                         pm25_dict['ch2max']),
                                      quality=quality_return_pm25(
-                                         channels[1])),
+                                         pm25_dict['ch2max'])),
                                  "health_precaution": health_precaution,
                                  "area_list":[dict(name=e.name,id=e.id) for e in  location]
                              }
@@ -955,23 +960,23 @@ class AirPollutionGeneric(generics.CreateAPIView):
                 response = {
                     "PM10":
                         dict(
-                            value=channels[0],
+                            value=pm10_dict['ch1max'],
                             color=color_return_pm10(
-                                channels[0]),
+                                pm10_dict['ch1max']),
                             quality=quality_return_pm10(
-                                channels[0])),
+                                pm10_dict['ch1max'])),
                     "PM25": dict(
-                        value=channels[1],
+                        value=pm25_dict['ch2max'],
                         color=color_return_pm25(
-                            channels[1]),
+                            pm25_dict['ch2max']),
                         quality=quality_return_pm25(
-                            channels[1])),
+                            pm25_dict['ch2max'])),
                     "health_precaution": health_precaution,
                     "area_list": [dict(name=e.name, id=e.id) for e in location]
                 }
                 AirPollutionCurrent.objects.create(
                     pollution_date=datetime.datetime.now().date(),
-                    tower=tower, pm10=channels[0], pm25=channels[1])
+                    tower=tower, pm10=pm10_dict['ch1max'], pm25=pm25_dict['ch2max'])
             return JsonResponse(dict(status=200,
                                      message="success",
                                      payload=response
