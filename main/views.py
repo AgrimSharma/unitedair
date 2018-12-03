@@ -90,8 +90,6 @@ def distance(data, points):
 
 
 def pollutant_list():
-    levels = ['Severe', 'Very Poor', 'Poor', 'Moderately Polluted',
-              'Satisfactory', 'Good']
     response = []
     pm10_quality = AirQuality.objects.filter(pm_type='PM10').order_by("minimum")
     pm25_quality = AirQuality.objects.filter(pm_type='PM25').order_by("minimum")
@@ -394,7 +392,7 @@ def blog_data(events, page_no):
                 heading=e.heading,
                 description=e.description,
                 event_image=e.blog_image,
-                create_date=e.created_date,
+                create_date=e.created_date.strftime("%d-%m-%y"),
             )
         )
 
