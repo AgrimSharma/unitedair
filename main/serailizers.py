@@ -116,3 +116,11 @@ class UserNotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserNotification
         fields = ["device_id", "location_id", "device_type"]
+
+
+class VersionSerializer(serializers.ModelSerializer):
+    android_version = serializers.CharField(required=True)
+
+    class Meta:
+        model = ApplicationVersion
+        fields = ["android_version"]

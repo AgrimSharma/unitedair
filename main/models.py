@@ -39,10 +39,12 @@ class Events(models.Model):
         verbose_name_plural = "Event"
 
     def __unicode__(self):
-        return "{} : {} : {}".format(self.heading, self.event_date, self.event_time)
+        return "{} : {} : {}".format(self.heading, self.event_date,
+                                     self.event_time)
 
     def __str__(self):
-        return "{} : {} : {}".format(self.heading, self.event_date, self.event_time)
+        return "{} : {} : {}".format(self.heading, self.event_date,
+                                     self.event_time)
 
 
 class InterestedEvent(models.Model):
@@ -74,10 +76,12 @@ class BlogCategories(models.Model):
         verbose_name_plural = "Blog Categories"
 
     def __unicode__(self):
-        return "{} : {}: {}".format(self.name, self.blog_image, self.created_date)
+        return "{} : {}: {}".format(self.name, self.blog_image,
+                                    self.created_date)
 
     def __str__(self):
-        return "{} : {}: {}".format(self.name, self.blog_image, self.created_date)
+        return "{} : {}: {}".format(self.name, self.blog_image,
+                                    self.created_date)
 
 
 class Blog(models.Model):
@@ -93,10 +97,12 @@ class Blog(models.Model):
         verbose_name_plural = "Blog"
 
     def __unicode__(self):
-        return "{} : {}: {}".format(self.category.name, self.heading, self.created_date)
+        return "{} : {}: {}".format(self.category.name, self.heading,
+                                    self.created_date)
 
     def __str__(self):
-        return "{} : {}: {}".format(self.category.name, self.heading, self.created_date)
+        return "{} : {}: {}".format(self.category.name, self.heading,
+                                    self.created_date)
 
 
 class AirQuality(models.Model):
@@ -135,10 +141,12 @@ class Towers(models.Model):
         verbose_name_plural = "Towers"
 
     def __unicode__(self):
-        return "{} : {}: {}".format(self.location_name.name, self.latitude, self.longitude)
+        return "{} : {}: {}".format(self.location_name.name, self.latitude,
+                                    self.longitude)
 
     def __str__(self):
-        return "{} : {}: {}".format(self.location_name.name, self.latitude, self.longitude)
+        return "{} : {}: {}".format(self.location_name.name, self.latitude,
+                                    self.longitude)
 
 
 class AirPollution(models.Model):
@@ -153,10 +161,12 @@ class AirPollution(models.Model):
         verbose_name_plural = "Air Pollution"
 
     def __unicode__(self):
-        return "{} : {}: {}".format(self.towers.location_name.name, self.pm25, self.pm10)
+        return "{} : {}: {}".format(self.towers.location_name.name,
+                                    self.pm25, self.pm10)
 
     def __str__(self):
-        return "{} : {}: {}".format(self.towers.location_name.name, self.pm25, self.pm10)
+        return "{} : {}: {}".format(self.towers.location_name.name,
+                                    self.pm25, self.pm10)
 
 
 class Registration(models.Model):
@@ -227,10 +237,12 @@ class AirPollutionWeekly(models.Model):
         verbose_name_plural = "Air Pollution Weekly"
 
     def __unicode__(self):
-        return "{} : {} : {} : {}".format(self.pollution_date, self.pm25_max, self.pm10_max, self.tower.location)
+        return "{} : {} : {} : {}".format(self.pollution_date, self.pm25_max,
+                                          self.pm10_max, self.tower.location)
 
     def __str__(self):
-        return "{} : {} : {} : {}".format(self.pollution_date, self.pm25_max, self.pm10_max, self.tower.location)
+        return "{} : {} : {} : {}".format(self.pollution_date, self.pm25_max,
+                                          self.pm10_max, self.tower.location)
 
 
 class ExtraFields(models.Model):
@@ -245,10 +257,12 @@ class ExtraFields(models.Model):
         verbose_name_plural = "Air Quality Extra Fields"
 
     def __unicode__(self):
-        return "{} : {} : {}".format(self.air_quality, self.display_text, self.display_image)
+        return "{} : {} : {}".format(self.air_quality, self.display_text,
+                                     self.display_image)
 
     def __str__(self):
-        return "{} : {} : {}".format(self.air_quality, self.display_text, self.display_image)
+        return "{} : {} : {}".format(self.air_quality, self.display_text,
+                                     self.display_image)
 
 
 class AirPollutionCurrent(models.Model):
@@ -264,7 +278,23 @@ class AirPollutionCurrent(models.Model):
         verbose_name_plural = "Air Pollution Current"
 
     def __unicode__(self):
-        return "{} : {} : {} : {}".format(self.pollution_date, self.pm25, self.pm10, self.tower.location)
+        return "{} : {} : {} : {}".format(self.pollution_date, self.pm25,
+                                          self.pm10, self.tower.location)
 
     def __str__(self):
-        return "{} : {} : {} : {}".format(self.pollution_date, self.pm25, self.pm10, self.tower.location)
+        return "{} : {} : {} : {}".format(self.pollution_date, self.pm25,
+                                          self.pm10, self.tower.location)
+
+
+class ApplicationVersion(models.Model):
+    android_version = models.CharField(max_length=100)
+
+    class Meta:
+        verbose_name = "Application Version"
+        verbose_name_plural = "Application Version"
+
+    def __unicode__(self):
+        return "{}".format(self.android_version)
+
+    def __str__(self):
+        return "{}".format(self.android_version)

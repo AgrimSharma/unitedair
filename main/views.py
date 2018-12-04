@@ -13,12 +13,8 @@ import requests
 from math import sin, cos, sqrt, atan2, radians
 import re
 
-# loc_gur = Location.
-# location_first = []
-# location_second = ["Arjan Garh", "Sector 7, Gurgaon", "Ambaince Mall, Gurgaon"]
 
-
-def isValidEmail(email):
+def is_valid_email(email):
     match = re.match(
         '^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$',
         email)
@@ -259,8 +255,6 @@ def air_pollution_weekly_static(location):
         pm10_list = pm10_list[2:]
         pm25_list = pm25_list[2:]
     else:
-        left_pm10 = 7 - len(pm10_list)
-        left_pm25 = 7 - len(pm25_list)
         pm10_list = pm10_list
         pm25_list = pm25_list
     # if len(pm25_list) < 4 or len(pm10_list) < 4:
@@ -1060,7 +1054,6 @@ class RegistrationGeneric(generics.CreateAPIView):
             except Exception:
                 return JsonResponse(dict(
                     status=400, message="All key are mandatory", payload={}))
-
             try:
                 device = Registration.objects.get(email=email)
                 return JsonResponse(dict(
@@ -1138,7 +1131,7 @@ class UserSubscribeGeneric(generics.CreateAPIView):
                     status=400,
                     message="Email Missing",
                     payload={}))
-            validated = isValidEmail(email)
+            validated = is_valid_email(email)
             if validated:
                 try:
                     blog_category = UserSubscribe.objects.get(email=email)
@@ -1239,6 +1232,62 @@ class NotificationGeneric(generics.CreateAPIView):
             message = "Notification sent"
             return JsonResponse(dict(
                 status=status, message=message, payload={}))
+
+
+# class ApplicationVersionGeneric(generics.CreateAPIView):
+#     """
+#     Class for fetching all the upcoming and past events
+#     """
+#     queryset = ApplicationVersion.objects.all()
+#     serializer_class = VersionSerializer
+#
+#     def create(self, request, *args, **kwargs):
+#         if request.method == "POST" and \
+#                 request.META.get("HTTP_X_API_KEY") == settings.HTTP_API_KEY \
+#                 and request.META.get('HTTP_X_API_VERSION', None) == \
+#                 settings.API_VERSION:
+#             if request.data:
+#                 android_version = request.data['android_version']
+#             else:
+#                 android_version = request.POST.get('android_version', "")
+#             if not android_version:
+#                 message = "Key Missing"
+#                 status = 400
+#             else:
+#                 version = ApplicationVersion.objects.latest('id')
+#                 if android_version < version.android_version:
+#                     message = "please update"
+#                     status = 200
+#                 else:
+#                     # version.android_version = android_version
+#                     # version.save()
+#                     message = "success"
+#                     status = 200
+#
+#
+#             return JsonResponse(dict(
+#                 status=status, message=message, payload={}))
+
+
+class ApplicationVersionGetGeneric(generics.CreateAPIView):
+    """
+    Class for fetching all the upcoming and past events
+    """
+    queryset = ApplicationVersion.objects.all()
+    serializer_class = VersionSerializer
+
+    def create(self, request, *args, **kwargs):
+        if request.method == "POST" and \
+                request.META.get("HTTP_X_API_KEY") == settings.HTTP_API_KEY \
+                and request.META.get('HTTP_X_API_VERSION', None) == \
+                settings.API_VERSION:
+            version = ApplicationVersion.objects.latest('id')
+            message = "success"
+            status = 200
+            payload = dict(version=version.android_version)
+            return JsonResponse(dict(
+                status=status, message=message, payload=payload))
+
 
 
 def privacy_policy(request):

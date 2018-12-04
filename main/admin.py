@@ -53,6 +53,10 @@ class LocationAdmin(admin.ModelAdmin):
     list_display = ["name"]
 
 
+class VersionAdmin(admin.ModelAdmin):
+    list_display = ["android_version"]
+
+
 class AirPollutionLogsAdmin(admin.ModelAdmin):
     list_display = ["tower_name", "pollution_date", "pm25_max", "pm10_max"]
 
@@ -96,6 +100,7 @@ admin.site.register(Location, LocationAdmin)
 admin.site.register(Registration, RegistrationAdmin)
 admin.site.register(UserNotification, UserNotificationAdmin)
 admin.site.register(AirPollutionCurrent, AirPollutionCurrentAdmin)
+admin.site.register(ApplicationVersion, VersionAdmin)
 admin.site.register(AirPollution, AirPollutionAdmin)
 admin.site.register(AirPollutionWeekly, AirPollutionLogsAdmin)
 admin.site.register(Towers, TowerAdmin)

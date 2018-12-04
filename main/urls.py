@@ -36,6 +36,8 @@ urlpatterns = [
     url(r'^event_api_web', EventWebGeneric.as_view()),
     url(r'^subscribe', UserSubscribeGeneric.as_view()),
     url(r'^notification', NotificationGeneric.as_view()),
+    # url(r'^version_save', ApplicationVersionGeneric.as_view()),
+    url(r'^version_get', ApplicationVersionGetGeneric.as_view()),
 
     url(r'^privacy-policy', privacy_policy),
     url(r'^terms', terms_and_condition),
