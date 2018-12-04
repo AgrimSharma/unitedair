@@ -1215,11 +1215,13 @@ class NotificationGeneric(generics.CreateAPIView):
             push_service = FCMNotification(api_key=settings.FIRE_BASE_API_KEY)
             location = Location.objects.get(id=location_id)
             # events = Events.objects.filter(latitude__lte=lat, longitude__lte=lon)
-            events = Events.objects.filter(location=location)
+            date = datetime.datetime.now().date()
+            events = Events.objects.filter(location=location, event_date=date)
             for e in events:
                 try:
                     user_dev = UserNotification.objects.get(
-                        device_token=device_id, event=e)
+                        device_token=device_id, event=e, device_type=device_type)
+                    pass
                 except Exception:
                     user_dev = UserNotification.objects.create(
                         device_token=device_id, event=e, device_type=device_type)
