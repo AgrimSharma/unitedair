@@ -251,13 +251,13 @@ def air_pollution_weekly_static(location):
         stations_select = 284
     pm25_list, pm10_list, pm_scale = day_wise_data(days, locations_select, stations_select)
     print len(pm25_list)
-    if len(pm25_list) == 4:
+    if len(pm25_list) == 4 and len(pm10_list) == 4:
         pm10_list = pm10_list
         pm25_list = pm25_list
-    elif len(pm25_list) == 5:
+    elif len(pm25_list) == 5 and len(pm10_list) == 5:
         pm10_list = pm10_list[1:]
         pm25_list = pm25_list[1:]
-    elif len(pm25_list) == 6:
+    elif len(pm25_list) == 6 and len(pm10_list) == 6:
         pm10_list = pm10_list[2:]
         pm25_list = pm25_list[2:]
     else:
@@ -700,9 +700,10 @@ class AddEventInterestedGeneric(generics.CreateAPIView):
                 interested = InterestedEvent.objects.create(
                     event=event, device_id=device_id)
                 message = "success"
+            event_count = InterestedEvent.objects.filter(event=event)
             return JsonResponse(dict(status=200,
                                      message=message,
-                                     payload={}))
+                                     payload={"number_interested_users": len(event_count)}))
         else:
             return JsonResponse(dict(
                 status=400, message="Key missing", payload={}))
