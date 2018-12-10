@@ -237,7 +237,7 @@ def day_wise_data(days, locations_select, stations_select):
 def air_pollution_weekly_static(location):
 
     days = 7
-    location_first = [1, 2, 3, 6]
+    location_first = [1]
     # location_second = [4, 5, 7, 8]
     if location == "":
         location = 1
@@ -273,7 +273,7 @@ def air_pollution_weekly_static(location):
 
 
 def air_quality_static(location):
-    location_first = [1, 2, 3, 6]
+    location_first = [1]
     # location_second = [4, 5, 7, 8]
     if location == "":
         location = 1
@@ -958,8 +958,10 @@ class AirPollutionGeneric(generics.CreateAPIView):
                             quality=quality_return_pm25(
                                 poll.pm25)),
                         "health_precaution": health_precaution,
-                        "area_list": [dict(name=e.name, id=e.id) for e in
-                                      location]
+                        "area_list": [dict(name=l.name,
+                              id=l.tower_name.id,
+                              tower_id=l.id
+                              ) for l in location]
                     }
                 else:
                     response = {
@@ -977,7 +979,10 @@ class AirPollutionGeneric(generics.CreateAPIView):
                                      quality=quality_return_pm25(
                                          pm25_dict['ch2max'])),
                                  "health_precaution": health_precaution,
-                                 "area_list":[dict(name=e.name,id=e.id) for e in  location]
+                                 "area_list": [dict(name=l.name,
+                              id=l.tower_name.id,
+                              tower_id=l.id
+                              ) for l in location]
                              }
             except Exception:
                 response = {
@@ -995,7 +1000,10 @@ class AirPollutionGeneric(generics.CreateAPIView):
                         quality=quality_return_pm25(
                             pm25_dict['ch2max'])),
                     "health_precaution": health_precaution,
-                    "area_list": [dict(name=e.name, id=e.id) for e in location]
+                    "area_list": [dict(name=l.name,
+                              id=l.tower_name.id,
+                              tower_id=l.id
+                              ) for l in location]
                 }
                 AirPollutionCurrent.objects.create(
                     pollution_date=datetime.datetime.now().date(),
