@@ -958,10 +958,10 @@ class AirPollutionGeneric(generics.CreateAPIView):
                             quality=quality_return_pm25(
                                 poll.pm25)),
                         "health_precaution": health_precaution,
-                        "area_list": [dict(location_name=l.name,
-                                           location_id=l.id,
-                                           tower_id=l.tower_name.id
-                                           ) for l in location]
+                        "area_list": [dict(name=l.name,
+                              id=l.tower_name.id,
+                              tower_id=l.id
+                              ) for l in location]
                     }
                 else:
                     response = {
@@ -979,10 +979,10 @@ class AirPollutionGeneric(generics.CreateAPIView):
                                      quality=quality_return_pm25(
                                          pm25_dict['ch2max'])),
                                  "health_precaution": health_precaution,
-                                 "area_list": [dict(location_name=l.name,
-                         location_id=l.id,
-                         tower_id=l.tower_name.id
-                    ) for l in location]
+                                 "area_list": [dict(name=l.name,
+                              id=l.tower_name.id,
+                              tower_id=l.id
+                              ) for l in location]
                              }
             except Exception:
                 response = {
@@ -1000,10 +1000,10 @@ class AirPollutionGeneric(generics.CreateAPIView):
                         quality=quality_return_pm25(
                             pm25_dict['ch2max'])),
                     "health_precaution": health_precaution,
-                    "area_list": [dict(location_name=l.name,
-                         location_id=l.id,
-                         tower_id=l.tower_name.id
-                    ) for l in location]
+                    "area_list": [dict(name=l.name,
+                              id=l.tower_name.id,
+                              tower_id=l.id
+                              ) for l in location]
                 }
                 AirPollutionCurrent.objects.create(
                     pollution_date=datetime.datetime.now().date(),
