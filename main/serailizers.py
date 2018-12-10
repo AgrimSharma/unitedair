@@ -124,3 +124,9 @@ class VersionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ApplicationVersion
         fields = ["android_version"]
+
+
+class LocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Location
+        fields = ["name", "tower_name"]

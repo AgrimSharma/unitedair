@@ -239,11 +239,11 @@ def air_pollution_weekly_static(location):
     days = 7
     location_first = [1, 2, 3, 6]
     # location_second = [4, 5, 7, 8]
-    if location == "":
-        location = 1
-    else:
-        location = int(location)
-    if location in location_first:
+    # if location == "":
+    #     location = 1
+    # else:
+    #     location = int(location)
+    if int(location) == 1:
         locations_select = 168
         stations_select = 283
     else:
@@ -273,13 +273,13 @@ def air_pollution_weekly_static(location):
 
 
 def air_quality_static(location):
-    location_first = [1, 2, 3, 6]
+    # location_first = [1, 2, 3, 6]
     # location_second = [4, 5, 7, 8]
-    if location == "":
-        location = 1
-    else:
-        location = int(location)
-    if location in location_first:
+    # if location == "":
+    #     location = 1
+    # else:
+    #     location = int(location)
+    if int(location) == 1:
         locations_select = 168
         stations_select = 283
     else:
@@ -931,13 +931,15 @@ class AirPollutionGeneric(generics.CreateAPIView):
                 pm10_dict['ch1max']).capitalize(), pm_type="PM10")
             health_precaution = [
                 dict(preference_text=e.display_text,
-                     preference_image="http://103.91.90.242:8000/static/images/tips/{}".format(e.display_image))
+                     preference_image="http://103.91.90.242:8000/static/"
+                                      "images/tips/{}".format(e.display_image))
                 for e in images.extrafields_set.all()
             ]
             tower = Towers.objects.get(stationsSelect=station_select)
             try:
-                poll = AirPollutionCurrent.objects.get(pollution_date=datetime.datetime.now().date(),
-                                                        tower=tower)
+                poll = AirPollutionCurrent.objects.get(
+                    pollution_date=datetime.datetime.now().date(),
+                    tower=tower)
                 if channels[0] != poll.pm10 or channels[1] != poll.pm25:
                     poll.pm10 = float(pm10_dict['ch1max'])
                     poll.pm25 = float(pm25_dict['ch2max'])
@@ -956,8 +958,10 @@ class AirPollutionGeneric(generics.CreateAPIView):
                             quality=quality_return_pm25(
                                 poll.pm25)),
                         "health_precaution": health_precaution,
-                        "area_list": [dict(name=e.name, id=e.id) for e in
-                                      location]
+                        "area_list": [dict(location_name=l.name,
+                                           location_id=l.id,
+                                           tower_id=l.tower_name.id
+                                           ) for l in location]
                     }
                 else:
                     response = {
@@ -975,7 +979,10 @@ class AirPollutionGeneric(generics.CreateAPIView):
                                      quality=quality_return_pm25(
                                          pm25_dict['ch2max'])),
                                  "health_precaution": health_precaution,
-                                 "area_list":[dict(name=e.name,id=e.id) for e in  location]
+                                 "area_list": [dict(location_name=l.name,
+                         location_id=l.id,
+                         tower_id=l.tower_name.id
+                    ) for l in location]
                              }
             except Exception:
                 response = {
@@ -993,7 +1000,10 @@ class AirPollutionGeneric(generics.CreateAPIView):
                         quality=quality_return_pm25(
                             pm25_dict['ch2max'])),
                     "health_precaution": health_precaution,
-                    "area_list": [dict(name=e.name, id=e.id) for e in location]
+                    "area_list": [dict(location_name=l.name,
+                         location_id=l.id,
+                         tower_id=l.tower_name.id
+                    ) for l in location]
                 }
                 AirPollutionCurrent.objects.create(
                     pollution_date=datetime.datetime.now().date(),
@@ -1297,6 +1307,33 @@ class ApplicationVersionGetGeneric(generics.CreateAPIView):
             return JsonResponse(dict(
                 status=status, message=message, payload=payload))
 
+
+class LocationGeneric(generics.CreateAPIView):
+    """
+        Class for fetching all the upcoming and past events
+        """
+    queryset = Location.objects.all()
+    serializer_class = LocationSerializer
+
+    def create(self, request, *args, **kwargs):
+        if request.method == "POST" and \
+                request.META.get("HTTP_X_API_KEY") == settings.HTTP_API_KEY \
+                and request.META.get('HTTP_X_API_VERSION', None) == \
+                settings.API_VERSION:
+            location = Location.objects.all().order_by("name")
+            response = []
+            for l in location:
+                response.append(
+                    dict(location_name=l.name,
+                         location_id=l.id,
+                         tower_id=l.tower_name.id
+                    )
+                )
+            return JsonResponse(dict(
+                status=200, message="succeess", payload=response))
+        else:
+            return JsonResponse(dict(
+                status=400, message="Key Missing", payload=""))
 
 
 def privacy_policy(request):

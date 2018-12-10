@@ -4,66 +4,6 @@ from __future__ import unicode_literals
 from django.db import models
 
 
-class Location(models.Model):
-    name = models.TextField(max_length=1000)
-    created_date = models.DateField(auto_now=True)
-
-    class Meta:
-        ordering = ('-name',)
-        verbose_name = "Location"
-        verbose_name_plural = "Location"
-
-    def __unicode__(self):
-        return "{}".format(self.name)
-
-    def __str__(self):
-        return "{}".format(self.name)
-
-
-class Events(models.Model):
-    heading = models.CharField(max_length=1000)
-    description = models.TextField(max_length=2000)
-    event_image = models.URLField()
-    event_date = models.DateField()
-    event_time = models.TimeField()
-    event_address = models.CharField(max_length=2000)
-    latitude = models.FloatField()
-    longitude = models.FloatField()
-    location = models.ForeignKey(to=Location, on_delete=models.CASCADE)
-    created_date = models.DateTimeField(auto_now=True)
-    updated_date = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ('-event_date',)
-        verbose_name = "Event"
-        verbose_name_plural = "Event"
-
-    def __unicode__(self):
-        return "{} : {} : {}".format(self.heading, self.event_date,
-                                     self.event_time)
-
-    def __str__(self):
-        return "{} : {} : {}".format(self.heading, self.event_date,
-                                     self.event_time)
-
-
-class InterestedEvent(models.Model):
-    event = models.ForeignKey(to=Events, on_delete=models.CASCADE)
-    device_id = models.CharField(max_length=1000)
-    created_date = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ('-created_date',)
-        verbose_name = "Interested Event"
-        verbose_name_plural = "Interested Event"
-
-    def __unicode__(self):
-        return "{} : {}".format(self.event.heading, self.device_id)
-
-    def __str__(self):
-        return "{} : {}".format(self.event.heading, self.device_id)
-
-
 class BlogCategories(models.Model):
     name = models.CharField(max_length=100)
     color_code = models.CharField(max_length=100, null=True, blank=True)
@@ -129,8 +69,7 @@ class AirQuality(models.Model):
 class Towers(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
-    location = models.CharField(max_length=100)
-    location_name = models.ForeignKey(to=Location, on_delete=models.CASCADE)
+    locations = models.CharField(max_length=100)
     stationsSelect = models.CharField(max_length=1000, null=True, blank=True)
     locationsSelect = models.CharField(max_length=1000, null=True, blank=True)
     created_date = models.DateTimeField(auto_now=True)
@@ -141,12 +80,10 @@ class Towers(models.Model):
         verbose_name_plural = "Towers"
 
     def __unicode__(self):
-        return "{} : {}: {}".format(self.location_name.name, self.latitude,
-                                    self.longitude)
+        return "{}".format(self.locations)
 
     def __str__(self):
-        return "{} : {}: {}".format(self.location_name.name, self.latitude,
-                                    self.longitude)
+        return "{}".format(self.locations)
 
 
 class AirPollution(models.Model):
@@ -202,24 +139,6 @@ class UserSubscribe(models.Model):
 
     def __str__(self):
         return "{}".format(self.email)
-
-
-class UserNotification(models.Model):
-    device_token = models.CharField(max_length=2000)
-    event = models.ForeignKey(to=Events, on_delete=models.CASCADE)
-    device_type = models.CharField(max_length=100)
-    created_date = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ('-created_date',)
-        verbose_name = "User Notification"
-        verbose_name_plural = "User Notification"
-
-    def __unicode__(self):
-        return "{} : {}".format(self.device_token, self.event.heading)
-
-    def __str__(self):
-        return "{} : {}".format(self.device_token, self.event.heading)
 
 
 class AirPollutionWeekly(models.Model):
@@ -298,3 +217,82 @@ class ApplicationVersion(models.Model):
 
     def __str__(self):
         return "{}".format(self.android_version)
+
+
+class Location(models.Model):
+    name = models.CharField(max_length=1000)
+    tower_name = models.ForeignKey(to=Towers, on_delete=models.CASCADE)
+    created_date = models.DateField(auto_now=True)
+
+    class Meta:
+        ordering = ('-name',)
+        verbose_name = "Location"
+        verbose_name_plural = "Location"
+
+    def __unicode__(self):
+        return "{}".format(self.name)
+
+    def __str__(self):
+        return "{}".format(self.name)
+
+
+class Events(models.Model):
+    heading = models.CharField(max_length=1000)
+    description = models.TextField(max_length=2000)
+    event_image = models.URLField()
+    event_date = models.DateField()
+    event_time = models.TimeField()
+    event_address = models.CharField(max_length=2000)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    location = models.ForeignKey(to=Location, on_delete=models.CASCADE)
+    created_date = models.DateTimeField(auto_now=True)
+    updated_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ('-event_date',)
+        verbose_name = "Event"
+        verbose_name_plural = "Event"
+
+    def __unicode__(self):
+        return "{} : {} : {}".format(self.heading, self.event_date,
+                                     self.event_time)
+
+    def __str__(self):
+        return "{} : {} : {}".format(self.heading, self.event_date,
+                                     self.event_time)
+
+
+class InterestedEvent(models.Model):
+    event = models.ForeignKey(to=Events, on_delete=models.CASCADE)
+    device_id = models.CharField(max_length=1000)
+    created_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ('-created_date',)
+        verbose_name = "Interested Event"
+        verbose_name_plural = "Interested Event"
+
+    def __unicode__(self):
+        return "{} : {}".format(self.event.heading, self.device_id)
+
+    def __str__(self):
+        return "{} : {}".format(self.event.heading, self.device_id)
+
+
+class UserNotification(models.Model):
+    device_token = models.CharField(max_length=2000)
+    event = models.ForeignKey(to=Events, on_delete=models.CASCADE)
+    device_type = models.CharField(max_length=100)
+    created_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ('-created_date',)
+        verbose_name = "User Notification"
+        verbose_name_plural = "User Notification"
+
+    def __unicode__(self):
+        return "{} : {}".format(self.device_token, self.event.heading)
+
+    def __str__(self):
+        return "{} : {}".format(self.device_token, self.event.heading)

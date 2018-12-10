@@ -37,10 +37,6 @@ class AirPollutionAdmin(admin.ModelAdmin):
         return obj.towers.location_name.name
 
 
-class TowerAdmin(admin.ModelAdmin):
-    list_display = ["location", "latitude", "longitude"]
-
-
 class RegistrationAdmin(admin.ModelAdmin):
     list_display = ["name", "email", "phone", "device_id"]
 
@@ -49,8 +45,18 @@ class UserSubscribeAdmin(admin.ModelAdmin):
     list_display = ["email"]
 
 
-class LocationAdmin(admin.ModelAdmin):
-    list_display = ["name"]
+class PinCodeAdmin(admin.ModelAdmin):
+    list_display = ["pin_code"]
+
+
+class LocationAdmin(admin.TabularInline):
+    model = Location
+    extra = 0
+
+
+class TowerAdmin(admin.ModelAdmin):
+    list_display = ["locations"]
+    inlines = (LocationAdmin,)
 
 
 class VersionAdmin(admin.ModelAdmin):
@@ -59,7 +65,7 @@ class VersionAdmin(admin.ModelAdmin):
 
 class AirPollutionLogsAdmin(admin.ModelAdmin):
     list_display = ["tower_name", "pollution_date", "pm25_max", "pm10_max"]
-
+    
     def tower_name(self, obj):
         return obj.tower.location_name.name
 
@@ -96,7 +102,7 @@ admin.site.register(BlogCategories, BlogCategoryAdmin)
 admin.site.register(Blog, BlogAdmin)
 admin.site.register(UserSubscribe, UserSubscribeAdmin)
 admin.site.register(AirQuality, AirQualityAdmin)
-admin.site.register(Location, LocationAdmin)
+# admin.site.register(Location, LocationAdmin)
 admin.site.register(Registration, RegistrationAdmin)
 admin.site.register(UserNotification, UserNotificationAdmin)
 admin.site.register(AirPollutionCurrent, AirPollutionCurrentAdmin)
