@@ -276,6 +276,8 @@ def air_pollution_weekly_static(location):
 
 
 def air_quality_static(location):
+    location_first = [1]
+    # location_second = [4, 5, 7, 8]
     if location == "":
         location = 1
     else:
@@ -288,21 +290,18 @@ def air_quality_static(location):
         stations_select = 284
     # current = datetime.datetime.now().date().strftime("%d-%m-%Y")
     # current_ct = datetime.datetime.now().strftime("%d-%m-%Y %H:%M")
-    try:
-        url = "http://www.envirotechlive.com/app/ajax_cpcb.php"
+    url = "http://www.envirotechlive.com/app/ajax_cpcb.php"
 
-        querystring = {"method": "requestRecent", "isMultiStation": "1",
-                       "stationType": "aqmsp", "pagenum": "1", "pagesize": "50",
-                       "infoTypeRadio": "grid", "graphTypeRadio": "line",
-                       "exportTypeRadio": "csv", "timeBase": "24hours",
-                       "valueTypeRadio": "normal", "timeBaseQuick": "24hours",
-                       "locationsSelect": locations_select, "stationsSelect": stations_select,
-                       "channelNos_{}[]".format(stations_select): ["1", "2"]}
+    querystring = {"method": "requestRecent", "isMultiStation": "1",
+                   "stationType": "aqmsp", "pagenum": "1", "pagesize": "50",
+                   "infoTypeRadio": "grid", "graphTypeRadio": "line",
+                   "exportTypeRadio": "csv", "timeBase": "24hours",
+                   "valueTypeRadio": "normal", "timeBaseQuick": "24hours",
+                   "locationsSelect": locations_select, "stationsSelect": stations_select,
+                   "channelNos_{}[]".format(stations_select): ["1", "2"]}
 
-        response = requests.request("GET", url=url, params=querystring)
-        response = response.json()
-    except Exception:
-        response = "Unbale to fetch data"
+    response = requests.request("GET", url=url, params=querystring)
+    response = response.json()
     return response, stations_select
 
 
