@@ -930,7 +930,7 @@ class AirPollutionGeneric(generics.CreateAPIView):
             data, station_select = air_quality_static(location)
             channels = data[0]['channelsData']
             pm10_dict, pm25_dict = channels[0], channels[1]
-            location = Location.objects.all()
+            location = Location.objects.all().order_by("name")
             images = AirQuality.objects.get(name=quality_return_pm10(
                 pm10_dict['ch1max']).capitalize(), pm_type="PM10")
             health_precaution = [
