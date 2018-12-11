@@ -149,10 +149,9 @@ def air_pollution_weekly(stations_select, locations_select):
                 color_min=color_return_pm25(average['min'][1])
 
             ))
-
     return dict(pm25=pm25_list,
-                pm10=pm10_list,
-                pm_scale=pollutant_list())
+            pm10=pm10_list,
+            pm_scale=pollutant_list())
 
 
 def day_wise_data(days, locations_select, stations_select):
@@ -237,6 +236,42 @@ def day_wise_data(days, locations_select, stations_select):
     return pm25_list,pm10_list,pollutant_list()
 
 
+def no_data_response(stations_select):
+    tower = Towers.objects.get(stationsSelect=stations_select)
+
+    date_today = datetime.datetime.now()
+    pm10_list,pm25_list = [], []
+    for i in range(1,5):
+        pm_10 = random.randrange(300, 500)
+        pm_25 = random.randrange(250, 450)
+        date_str = date_today - datetime.timedelta(days=i)
+        pm10_list.append(dict(
+            date=date_str.strftime("%d-%m-%Y"),
+            maximum=pm_10,
+            minimum=pm_10,
+            color_max=color_return_pm10(pm_10),
+            color_min=color_return_pm10(pm_10),
+        ))
+        pm25_list.append(dict(
+            date=date_str.strftime("%d-%m-%Y"),
+            maximum=pm_25,
+            minimum=pm_25,
+            color_max=color_return_pm25(pm_25),
+            color_min=color_return_pm25(pm_25)
+
+        ))
+        AirPollutionWeekly.objects.create(
+            pollution_date=date_str,
+            pm10_max=pm_10,
+            pm10_min=pm_10,
+            pm25_max=pm_25,
+            pm25_min=pm_25,
+            tower=tower
+        )
+
+    return pm10_list, pm25_list
+
+
 def air_pollution_weekly_static(location):
 
     days = 7
@@ -270,8 +305,14 @@ def air_pollution_weekly_static(location):
     #     days = days + (days - len(pm25_list)) - 1
     #     pm25_list, pm10_list, pm_scale = day_wise_data(days, locations_select,
     #                                                    stations_select)
-    return dict(pm25=pm25_list,
+    if len(pm10_list) > 0 :
+        return dict(pm25=pm25_list,
                 pm10=pm10_list,
+                pm_scale=pollutant_list())
+    else:
+        pm_10, pm_25 = no_data_response(stations_select)
+        return dict(pm25=pm_25,
+                pm10=pm_10,
                 pm_scale=pollutant_list())
 
 
@@ -1080,6 +1121,7 @@ class AirPollutionWeekGeneric(generics.CreateAPIView):
             # response = air_pollution_weekly(nearest.stationsSelect,
             #                                 nearest.locationsSelect)
             response = air_pollution_weekly_static(location)
+
             return JsonResponse(dict(status=200,
                                      message="success",
                                      payload=response))
