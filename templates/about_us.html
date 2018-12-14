@@ -2,6 +2,10 @@
 <!DOCTYPE HTML>
 <html>
 <head>
+	<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
 <meta charset="utf-8">
 <title>Untitled Document</title>
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet">
@@ -69,7 +73,8 @@
 
 
 <p>
-		<a href="#" onclick="window.open('https://www.youtube.com/watch?v=e6rglsLy1Ys', '_system');" target="_blank">Click on this link to watch the campaign film </a>
+		<!-- <a href="#" onclick="window.('https://www.youtube.com/watch?v=e6rglsLy1Ys', '_system');" >Click on this link to watch the campaign film </a> -->
+		<p class="click_button" style="color:blue">Click on this link to watch the campaign film </p>
 </p>
 	<p class="txt-center find-us">Find us on <a onclick="window.open('https://www.instagram.com/unitedforair/?hl=en', '_system');"> <img src="{% static 'images/icon-insta.jpg' %}" /></a> <a onclick="window.open('https://www.facebook.com/unitedforair/', '_system');"> <img src="{% static 'images/icon-fb.jpg' %}" /></a> </p>
 
@@ -108,5 +113,10 @@
 </div>
 
 </div>
+<script>
+$(."click_button").click(function(){
+  window.href("https://www.youtube.com/watch?v=e6rglsLy1Ys");
+});
+</script>
 </body>
 </html>
