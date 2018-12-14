@@ -79,10 +79,6 @@
 		<!-- <a href="#" onclick="window.('https://www.youtube.com/watch?v=e6rglsLy1Ys', '_system');" >Click on this link to watch the campaign film </a> -->
 		<a onclick="mapsSelector()" >Click on this link to watch the campaign film </a>
 		<!-- <a href="https://www.youtube.com/watch?v=e6rglsLy1Ys" target="_system" >Click on this link to watch the campaign film </a> -->
-		<li><a href="http://google.com/">Remote Link (Google)</a></li>
-<li><a href="http://google.com/">JavaScript Link</a></li>
-<li><a href="/">Local Link</a></li>
-<li><a href="#amp">Local Anchor</a></li>
 </p>
 	<p class="txt-center find-us">Find us on <a onclick="window.open('https://www.instagram.com/unitedforair/?hl=en', '_system');"> <img src="{% static 'images/icon-insta.jpg' %}" /></a> <a onclick="window.open('https://www.facebook.com/unitedforair/', '_system');"> <img src="{% static 'images/icon-fb.jpg' %}" /></a> </p>
 
@@ -122,15 +118,15 @@
 
 </div>
 <script>
-// function mapsSelector() {
-//   if ((navigator.platform.indexOf("iPhone") != -1) || (navigator.platform.indexOf("iPad") != -1) || (navigator.platform.indexOf("iPod") != -1))
-// 	 {
-//     window.open("https://www.youtube.com/watch?v=e6rglsLy1Ys", "_safari");
-// 	}
-// else {/* else use Google */
-//     window.open("https://www.youtube.com/watch?v=e6rglsLy1Ys", "_chrome");
-// 	}
-// }
+function mapsSelector() {
+  if ((navigator.platform.indexOf("iPhone") != -1) || (navigator.platform.indexOf("iPad") != -1) || (navigator.platform.indexOf("iPod") != -1))
+	 {
+    window.open("https://www.youtube.com/watch?v=e6rglsLy1Ys", "_safari");
+	}
+else {/* else use Google */
+    window.open("https://www.youtube.com/watch?v=e6rglsLy1Ys", "_chrome");
+	}
+}
 
 
 </script>
