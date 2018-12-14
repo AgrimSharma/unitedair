@@ -239,7 +239,7 @@ class Location(models.Model):
 class Events(models.Model):
     heading = models.CharField(max_length=1000)
     description = models.TextField(max_length=2000)
-    event_image = models.URLField()
+    # event_image = models.CharField(max_length=1000)
     event_date = models.DateField()
     event_time = models.TimeField()
     event_address = models.CharField(max_length=2000)
@@ -296,3 +296,20 @@ class UserNotification(models.Model):
 
     def __str__(self):
         return "{} : {}".format(self.device_token, self.event.heading)
+
+
+class EventImage(models.Model):
+    display_image = models.ImageField(upload_to="static/images/events/")
+    event = models.ForeignKey(to=Events, on_delete=models.CASCADE)
+    created_date = models.DateField(auto_now=True)
+
+    class Meta:
+        ordering = ('-created_date',)
+        verbose_name = "Event Image"
+        verbose_name_plural = "Event Image"
+
+    def __unicode__(self):
+        return "{} : {}".format(self.display_image, self.event)
+
+    def __str__(self):
+        return "{} : {}".format(self.display_image, self.event)

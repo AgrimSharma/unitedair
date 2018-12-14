@@ -5,9 +5,15 @@ from django.contrib import admin
 from .models import *
 
 
+class EventImageAdmin(admin.TabularInline):
+    model = EventImage
+    extra = 0
+
+
 class EventAdmin(admin.ModelAdmin):
     date_hierarchy = 'event_date'
     list_display = ["heading", "event_date", "event_time"]
+    inlines = [EventImageAdmin]
 
 
 class InterestedEventAdmin(admin.ModelAdmin):
