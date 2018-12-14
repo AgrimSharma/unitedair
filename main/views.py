@@ -415,10 +415,10 @@ def event_data(events, page_no):
     response = []
     for e in events:
         try:
-            img = "http://103.91.90.242:8000/{}".format(
-                e.eventimage_set.all()[0].display_image)
+            img = ["http://103.91.90.242:8000/{}".
+                                 format(f.display_image) for f in e.eventimage_set.all()] if len(e.eventimage_set.all()) > 0 else [],
         except Exception:
-            img = ""
+            img = []
         response.append(
             dict(
                 id=e.id,
@@ -701,7 +701,8 @@ class EventDetailGeneric(generics.CreateAPIView):
                 id=event.id,
                 heading=event.heading,
                 description=event.description,
-                event_image=["http://103.91.90.242:8000/{}".format(e.display_image) for e in event.eventimage_set.all()],
+                event_image=["http://103.91.90.242:8000/{}".
+                                 format(e.display_image) for e in event.eventimage_set.all()] if len(event.eventimage_set.all()) > 0 else [],
                 event_date=event.event_date.strftime("%d-%m-%Y"),
                 event_time=event.event_time,
                 event_address=event.event_address,
