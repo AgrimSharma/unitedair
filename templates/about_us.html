@@ -74,7 +74,7 @@
 
 <p>
 		<!-- <a href="#" onclick="window.('https://www.youtube.com/watch?v=e6rglsLy1Ys', '_system');" >Click on this link to watch the campaign film </a> -->
-		<p class="click_button" style="color:blue">Click on this link to watch the campaign film </p>
+		<p onclick="mapsSelector()" style="color:blue">Click on this link to watch the campaign film </p>
 </p>
 	<p class="txt-center find-us">Find us on <a onclick="window.open('https://www.instagram.com/unitedforair/?hl=en', '_system');"> <img src="{% static 'images/icon-insta.jpg' %}" /></a> <a onclick="window.open('https://www.facebook.com/unitedforair/', '_system');"> <img src="{% static 'images/icon-fb.jpg' %}" /></a> </p>
 
@@ -114,9 +114,15 @@
 
 </div>
 <script>
-$(".click_button").click(function(){
-  window.location.href = "https://www.youtube.com/watch?v=e6rglsLy1Ys";
-});
+function mapsSelector() {
+  if /* if we're on iOS, open in Apple Maps */
+    ((navigator.platform.indexOf("iPhone") != -1) ||
+     (navigator.platform.indexOf("iPad") != -1) ||
+     (navigator.platform.indexOf("iPod") != -1))
+    window.open("safari://www.youtube.com/watch?v=e6rglsLy1Ys");
+else /* else use Google */
+    window.open("https://www.youtube.com/watch?v=e6rglsLy1Ys");
+}
 </script>
 </body>
 </html>
