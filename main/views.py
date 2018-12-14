@@ -416,7 +416,8 @@ def event_data(events, page_no):
     for e in events:
         try:
             img = ["http://103.91.90.242:8000/{}".
-                                 format(f.display_image) for f in e.eventimage_set.all()] if len(e.eventimage_set.all()) > 0 else [],
+                                 format(f.display_image) for f in e.eventimage_set.all()] if len(e.eventimage_set.all()) > 0 else []
+            img = img[0]
         except Exception:
             img = []
         response.append(
