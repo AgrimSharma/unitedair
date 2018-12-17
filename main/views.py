@@ -1065,45 +1065,81 @@ class AirPollutionGeneric(generics.CreateAPIView):
                         pollution_date=datetime.datetime.now().date(),
                         tower=tower, pm10=pm10_dict['ch1max'], pm25=pm25_dict['ch2max'])
             except Exception:
-                location = Location.objects.all().order_by("name")
-                pm_10 = random.randrange(350, 500)
-                pm_25 = random.randrange(200, 500)
-                if pm_10 == pm_25:
-                    pm_25 = random.randrange(200, 500)
-                images = AirQuality.objects.get(name__contains=quality_return_pm10(
-                    pm_10).capitalize(), pm_type="PM10")
-                health_precaution = [
-                    dict(preference_text=e.display_text,
-                         preference_image="http://103.91.90.242:8000/static/"
-                                          "images/tips/{}".format(
-                             e.display_image))
-                    for e in images.extrafields_set.all()
-                ]
-                response = {
-                    "PM10":
-                        dict(
-                            value=pm_10,
-                            color=color_return_pm10(pm_10),
-                            quality=quality_return_pm10(
-                                pm_10)),
-                    "PM25": dict(
-                        value=pm_25,
-                        color=color_return_pm25(
-                            pm_25),
-                        quality=quality_return_pm25(
-                            pm_25)),
-                    "health_precaution": health_precaution,
-                    "area_list": [dict(name=l.name,
-                                       id=l.tower_name.id,
-                                       tower_id=l.id
-                                       ) for l in location]
-                }
                 tower = Towers.objects.get(stationsSelect=station_select)
 
-                AirPollutionCurrent.objects.create(
+                air_quality = AirPollutionCurrent.objects.filter(
                     pollution_date=datetime.datetime.now().date(),
-                    tower=tower, pm10=pm_10,
-                    pm25=pm_25)
+                    tower=tower)
+                if len(air_quality) > 0:
+                    air_quality = air_quality[0]
+                    images = AirQuality.objects.get(
+                        name__contains=quality_return_pm10(
+                            air_quality.pm10).capitalize(), pm_type="PM10")
+                    health_precaution = [
+                        dict(preference_text=e.display_text,
+                             preference_image="http://103.91.90.242:8000/static/"
+                                              "images/tips/{}".format(
+                                 e.display_image))
+                        for e in images.extrafields_set.all()
+                    ]
+                    response = {
+                        "PM10":
+                            dict(
+                                value=air_quality.pm10,
+                                color=color_return_pm10(air_quality.pm10),
+                                quality=quality_return_pm10(
+                                    air_quality.pm10)),
+                        "PM25": dict(
+                            value=air_quality.pm25,
+                            color=color_return_pm25(
+                                air_quality.pm25),
+                            quality=quality_return_pm25(
+                                air_quality.pm25)),
+                        "health_precaution": health_precaution,
+                        "area_list": [dict(name=l.name,
+                                           id=l.tower_name.id,
+                                           tower_id=l.id
+                                           ) for l in location]
+                    }
+                else:
+                    location = Location.objects.all().order_by("name")
+                    pm_10 = random.randrange(350, 500)
+                    pm_25 = random.randrange(200, 500)
+                    if pm_10 == pm_25:
+                        pm_25 = random.randrange(200, 500)
+                    images = AirQuality.objects.get(name__contains=quality_return_pm10(
+                        pm_10).capitalize(), pm_type="PM10")
+                    health_precaution = [
+                        dict(preference_text=e.display_text,
+                             preference_image="http://103.91.90.242:8000/static/"
+                                              "images/tips/{}".format(
+                                 e.display_image))
+                        for e in images.extrafields_set.all()
+                    ]
+                    response = {
+                        "PM10":
+                            dict(
+                                value=pm_10,
+                                color=color_return_pm10(pm_10),
+                                quality=quality_return_pm10(
+                                    pm_10)),
+                        "PM25": dict(
+                            value=pm_25,
+                            color=color_return_pm25(
+                                pm_25),
+                            quality=quality_return_pm25(
+                                pm_25)),
+                        "health_precaution": health_precaution,
+                        "area_list": [dict(name=l.name,
+                                           id=l.tower_name.id,
+                                           tower_id=l.id
+                                           ) for l in location]
+                    }
+
+                    AirPollutionCurrent.objects.create(
+                        pollution_date=datetime.datetime.now().date(),
+                        tower=tower, pm10=pm_10,
+                        pm25=pm_25)
             return JsonResponse(dict(status=200,
                                      message="success",
                                      payload=response
