@@ -40,7 +40,7 @@ class AirPollutionAdmin(admin.ModelAdmin):
     list_display = ["tower_name", "pm10", "pm25"]
 
     def tower_name(self, obj):
-        return obj.towers.location_name.name
+        return obj.towers.location
 
 
 class RegistrationAdmin(admin.ModelAdmin):
@@ -80,7 +80,7 @@ class AirPollutionCurrentAdmin(admin.ModelAdmin):
     list_display = ["tower_name", "pollution_date", "pm25", "pm10"]
 
     def tower_name(self, obj):
-        return obj.tower.location_name.name
+        return obj.tower.location
 
 
 class UserNotificationAdmin(admin.ModelAdmin):
