@@ -110,6 +110,11 @@ def air_pollution_weekly(stations_select, locations_select):
     last_week = current - datetime.timedelta(days=5)
 
     url = "http://www.envirotechlive.com/app/ajax_cpcb.php"
+    headers = {
+        'content-type': "application/json",
+        'referer': "http://www.envirotechlive.com/app/cpcbAQMSPReportMultiStation.php",
+        'cookie': "PHPSESSID=bnhlctoem246rkgguinm3cfrv1",
+    }
     for i in range(1, 5):
         dates = last_week + datetime.timedelta(days=i)
         date_str = dates.strftime("%d-%m-%Y")
@@ -129,7 +134,7 @@ def air_pollution_weekly(stations_select, locations_select):
                        "locationsSelect": locations_select,
                        "stationsSelect": stations_select,
                        "channelNos_{}[]".format(stations_select): ["1", "2"]}
-        response = requests.request("GET", url, params=querystring)
+        response = requests.request("GET", url, params=querystring, headers=headers)
         data = response.json()
 
         if len(data['data']) > 0:
@@ -203,7 +208,12 @@ def day_wise_data(days, locations_select, stations_select):
                                "locationsSelect": locations_select,
                                "stationsSelect": stations_select,
                                "channelNos_{}[]".format(stations_select): ["1", "2"]}
-                response = requests.request("GET", url, params=querystring)
+                headers = {
+                    'content-type': "application/json",
+                    'referer': "http://www.envirotechlive.com/app/cpcbAQMSPReportMultiStation.php",
+                    'cookie': "PHPSESSID=bnhlctoem246rkgguinm3cfrv1",
+                }
+                response = requests.request("GET", url, params=querystring, headers=headers)
                 data = response.json()
                 if len(data['data']) > 0:
                     average = data['avgminmax']
@@ -330,7 +340,11 @@ def air_quality_static(location):
     # current = datetime.datetime.now().date().strftime("%d-%m-%Y")
     # current_ct = datetime.datetime.now().strftime("%d-%m-%Y %H:%M")
     url = "http://www.envirotechlive.com/app/ajax_cpcb.php"
-
+    headers = {
+        'content-type': "application/json",
+        'referer': "http://www.envirotechlive.com/app/cpcbAQMSPReportMultiStation.php",
+        'cookie': "PHPSESSID=bnhlctoem246rkgguinm3cfrv1",
+    }
     querystring = {"method": "requestRecent", "isMultiStation": "1",
                    "stationType": "aqmsp", "pagenum": "1", "pagesize": "50",
                    "infoTypeRadio": "grid", "graphTypeRadio": "line",
@@ -339,7 +353,7 @@ def air_quality_static(location):
                    "locationsSelect": locations_select, "stationsSelect": stations_select,
                    "channelNos_{}[]".format(stations_select): ["1", "2"]}
 
-    response = requests.request("GET", url=url, params=querystring)
+    response = requests.request("GET", url=url, params=querystring, headers=headers)
     try:
         response = response.json()
     except Exception:
@@ -351,7 +365,11 @@ def air_quality_data(stations_select, locations_select):
     current = datetime.datetime.now().date().strftime("%d-%m-%Y")
     current_ct = datetime.datetime.now().strftime("%d-%m-%Y %H:%M")
     url = "http://www.envirotechlive.com/app/ajax_cpcb.php"
-
+    headers = {
+        'content-type': "application/json",
+        'referer': "http://www.envirotechlive.com/app/cpcbAQMSPReportMultiStation.php",
+        'cookie': "PHPSESSID=bnhlctoem246rkgguinm3cfrv1",
+    }
     querystring = {"method": "requestStationReport",
                    "quickReportType": "today",
                    "isMultiStation": "1", "stationType": "aqmsp",
@@ -367,7 +385,7 @@ def air_quality_data(stations_select, locations_select):
                    "stationsSelect": stations_select,
                    "channelNos_{}[]".format(stations_select): ["1", "2"]}
 
-    response = requests.request("GET", url=url, params=querystring)
+    response = requests.request("GET", url=url, params=querystring, headers=headers)
     return response.json()
 
 
