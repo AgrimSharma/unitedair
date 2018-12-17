@@ -98,11 +98,11 @@ class AirPollution(models.Model):
         verbose_name_plural = "Air Pollution"
 
     def __unicode__(self):
-        return "{} : {}: {}".format(self.towers.location,
+        return "{} : {}: {}".format(self.towers.locations,
                                     self.pm25, self.pm10)
 
     def __str__(self):
-        return "{} : {}: {}".format(self.towers.location,
+        return "{} : {}: {}".format(self.towers.locations,
                                     self.pm25, self.pm10)
 
 
@@ -157,11 +157,11 @@ class AirPollutionWeekly(models.Model):
 
     def __unicode__(self):
         return "{} : {} : {} : {}".format(self.pollution_date, self.pm25_max,
-                                          self.pm10_max, self.tower.location)
+                                          self.pm10_max, self.tower.locations)
 
     def __str__(self):
         return "{} : {} : {} : {}".format(self.pollution_date, self.pm25_max,
-                                          self.pm10_max, self.tower.location)
+                                          self.pm10_max, self.tower.locations)
 
 
 class ExtraFields(models.Model):
@@ -198,11 +198,11 @@ class AirPollutionCurrent(models.Model):
 
     def __unicode__(self):
         return "{} : {} : {} : {}".format(self.pollution_date, self.pm25,
-                                          self.pm10, self.tower.location)
+                                          self.pm10, self.tower.locations)
 
     def __str__(self):
         return "{} : {} : {} : {}".format(self.pollution_date, self.pm25,
-                                          self.pm10, self.tower.location)
+                                          self.pm10, self.tower.locations)
 
 
 class ApplicationVersion(models.Model):
