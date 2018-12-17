@@ -73,7 +73,7 @@ class AirPollutionLogsAdmin(admin.ModelAdmin):
     list_display = ["tower_name", "pollution_date", "pm25_max", "pm10_max"]
     
     def tower_name(self, obj):
-        return obj.tower.location_name.name
+        return obj.tower.location
 
 
 class AirPollutionCurrentAdmin(admin.ModelAdmin):
