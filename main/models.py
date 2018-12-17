@@ -98,11 +98,11 @@ class AirPollution(models.Model):
         verbose_name_plural = "Air Pollution"
 
     def __unicode__(self):
-        return "{} : {}: {}".format(self.towers.location_name.name,
+        return "{} : {}: {}".format(self.towers.location,
                                     self.pm25, self.pm10)
 
     def __str__(self):
-        return "{} : {}: {}".format(self.towers.location_name.name,
+        return "{} : {}: {}".format(self.towers.location,
                                     self.pm25, self.pm10)
 
 
