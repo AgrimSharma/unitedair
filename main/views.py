@@ -1098,6 +1098,12 @@ class AirPollutionGeneric(generics.CreateAPIView):
                                        tower_id=l.id
                                        ) for l in location]
                 }
+                tower = Towers.objects.get(stationsSelect=station_select)
+
+                AirPollutionCurrent.objects.create(
+                    pollution_date=datetime.datetime.now().date(),
+                    tower=tower, pm10=pm_10,
+                    pm25=pm_25)
             return JsonResponse(dict(status=200,
                                      message="success",
                                      payload=response
