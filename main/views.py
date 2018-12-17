@@ -346,9 +346,12 @@ def air_quality_static(location):
         'cookie': "PHPSESSID=bnhlctoem246rkgguinm3cfrv1",
     }
     querystring = {"method": "requestRecent", "isMultiStation": "1",
-                   "stationType": "aqmsp", "pagenum": "1", "pagesize": "50",
-                   "infoTypeRadio": "grid", "graphTypeRadio": "line",
-                   "exportTypeRadio": "csv", "timeBase": "24hours",
+                   "stationType": "aqmsp",
+                   "lastDataDate": "17-12-2018 00:00:00", "pagenum": "1",
+                   "pagesize": "50", "infoTypeRadio": "grid",
+                   "graphTypeRadio": "line", "exportTypeRadio": "csv",
+                   "fromDate": "17-12-2018 00:00",
+                   "toDate": "17-12-2018 12:28", "timeBase": "1hour",
                    "valueTypeRadio": "normal", "timeBaseQuick": "24hours",
                    "locationsSelect": locations_select, "stationsSelect": stations_select,
                    "channelNos_{}[]".format(stations_select): ["1", "2"]}
