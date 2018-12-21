@@ -1493,6 +1493,211 @@ class LocationGeneric(generics.CreateAPIView):
                 status=400, message="Key Missing", payload=""))
 
 
+def fetch_date(data):
+    data = data['data']
+    pm10 = [float(x[0]) for x in data.values()]
+    pm25 = [float(x[1]) for x in data.values()]
+    return sum(pm10) / len(pm10), sum(pm25) / len(pm25)
+
+
+class AirPollutionNew(generics.CreateAPIView):
+    queryset = AirPollution.objects.all()
+    serializer_class = AirPollutionSerializer
+
+    def create(self, request, *args, **kwargs):
+        if request.method == "POST" and \
+                request.META.get("HTTP_X_API_KEY") == settings.HTTP_API_KEY \
+                and request.META.get('HTTP_X_API_VERSION', None) == \
+                settings.API_VERSION:
+            try:
+                if request.data:
+                    location = request.data.get('location', "")
+                else:
+                    location = request.POST.get('location', "")
+            except Exception:
+                return JsonResponse(dict(
+                    status=400,
+                    message="Location Missing", payload={}))
+
+            url = "http://www.envirotechlive.com/app/Actions/DataPullAPIAction.php"
+            formDate = (datetime.datetime.now() -
+                             datetime.timedelta(hours=1)).strftime("%d-%m-%Y %H:%M:%S")
+            querystring = {
+                "call": "GetStationData",
+                "fromDate": formDate,
+                "folderSeq": location
+            }
+            headers = {
+                'authorization': "Basic ZW52aXJvdGVjaF9hcW1zcDpTeXN0ZW0jOTA4MTA=",
+                'content-type': "application/json",
+            }
+
+            response = requests.request("POST", url, headers=headers,
+                                        params=querystring)
+            pm10, pm25 = fetch_date(response.json())
+            images = AirQuality.objects.get(name=quality_return_pm10(
+                pm10).capitalize(), pm_type="PM10")
+            health_precaution = [
+                dict(preference_text=e.display_text,
+                     preference_image="http://103.91.90.242:8000/static/"
+                                      "images/tips/{}".format(e.display_image))
+                for e in images.extrafields_set.all()
+            ]
+            tower = Towers.objects.get(stationsSelect=location)
+            locations = Location.objects.all()
+            try:
+                poll = AirPollutionCurrent.objects.get(
+                    pollution_date=datetime.datetime.now().date(),
+                    tower=tower)
+                if float(pm10) != poll.pm10 or float(
+                        pm25) != poll.pm25:
+                    poll.pm10 = round(float(pm10), 2)
+                    poll.pm25 = round(float(pm25), 2)
+                    response = {
+                        "PM10":
+                            dict(
+                                value=poll.pm10,
+                                color=color_return_pm10(
+                                    poll.pm10),
+                                quality=quality_return_pm10(
+                                    poll.pm10)),
+                        "PM25": dict(
+                            value=poll.pm25,
+                            color=color_return_pm25(
+                                poll.pm25),
+                            quality=quality_return_pm25(
+                                poll.pm25)),
+                        "health_precaution": health_precaution,
+                        "area_list": [dict(name=l.name,
+                                           id=l.tower_name.id,
+                                           tower_id=l.id
+                                           ) for l in locations]
+                    }
+                else:
+                    response = {
+                        "PM10":
+                            dict(
+                                value=pm10,
+                                color=color_return_pm10(
+                                    pm10),
+                                quality=quality_return_pm10(
+                                    pm10)),
+                        "PM25": dict(
+                            value=pm25,
+                            color=color_return_pm25(
+                                pm25),
+                            quality=quality_return_pm25(
+                                pm25)),
+                        "health_precaution": health_precaution,
+                        "area_list": [dict(name=l.name,
+                                           id=l.tower_name.id,
+                                           tower_id=l.id
+                                           ) for l in locations]
+                    }
+            except Exception:
+                response = {
+                    "PM10":
+                        dict(
+                            value=pm10,
+                            color=color_return_pm10(
+                                pm10),
+                            quality=quality_return_pm10(
+                                pm10)),
+                    "PM25": dict(
+                        value=pm25,
+                        color=color_return_pm25(
+                            pm25),
+                        quality=quality_return_pm25(
+                            pm25)),
+                    "health_precaution": health_precaution,
+                    "area_list": [dict(name=l.name,
+                                       id=l.tower_name.id,
+                                       tower_id=l.id
+                                       ) for l in locations]
+                }
+                AirPollutionCurrent.objects.create(
+                    pollution_date=datetime.datetime.now().date(),
+                    tower=tower, pm10=round(float(pm10,2)), pm25=round(float(pm25)))
+            return JsonResponse(dict(status=200,
+                                     message="success",
+                                     payload=response
+                                     ))
+
+
+class AirPollutionWeekNewGeneric(generics.CreateAPIView):
+    queryset = AirPollution.objects.all()
+    serializer_class = AirPollutionSerializer
+
+    def create(self, request, *args, **kwargs):
+        if request.method == "POST" and \
+                request.META.get("HTTP_X_API_KEY") == settings.HTTP_API_KEY \
+                and request.META.get('HTTP_X_API_VERSION', None) ==\
+                settings.API_VERSION:
+            try:
+                if request.data:
+                    location = request.data.get('location',"")
+                else:
+                    location = request.POST.get('location', "")
+            except Exception:
+                return JsonResponse(dict(
+                    status=400,
+                    message="Location Missing", payload={}))
+            pm10_list, pm25_list = [], []
+            for i in range(5):
+                url = "http://www.envirotechlive.com/app/Actions/DataPullAPIAction.php"
+                formDate = (datetime.datetime.now() -
+                            datetime.timedelta(hours=1))
+                last_date = (formDate - datetime.timedelta(days=i))
+                querystring = {
+                    "call": "GetStationData",
+                    "fromDate": last_date.strftime("%d-%m-%Y %H:%M:%S"),
+                    "folderSeq": location
+                }
+                headers = {
+                    'authorization': "Basic ZW52aXJvdGVjaF9hcW1zcDpTeXN0ZW0jOTA4MTA=",
+                    'content-type': "application/json",
+                }
+
+                response = requests.request("POST", url, headers=headers,
+                                            params=querystring)
+                pm10, pm25 = fetch_date(response.json())
+                pm10 = round(float(pm10))
+                pm25 = round(float(pm25))
+                pm10_list.append(dict(
+                    date=last_date.strftime("%d-%m-%Y"),
+                    maximum=pm10,
+                    minimum=pm10,
+                    color_max=color_return_pm10(pm10),
+                    color_min=color_return_pm10(pm10),
+                ))
+                pm25_list.append(dict(
+                    date=last_date.strftime("%d-%m-%Y"),
+                    maximum=pm25,
+                    minimum=pm25,
+                    color_max=color_return_pm25(pm25),
+                    color_min=color_return_pm25(pm25)
+
+                ))
+                tower = Towers.objects.get(stationsSelect=location)
+
+                AirPollutionWeekly.objects.create(
+                    pollution_date=last_date.date(),
+                    pm10_max=pm10,
+                    pm10_min=pm10,
+                    pm25_max=pm25,
+                    pm25_min=pm25,
+                    tower=tower
+                )
+            return JsonResponse(dict(status=200,
+                                     message="success",
+                                     payload=dict(pm25=pm25_list,
+                                                  pm10=pm10_list,
+                                                  pm_scale=pollutant_list())))
+        else:
+            return JsonResponse(dict(
+                status=400, message="Key missing", payload={}))
+
+
 def privacy_policy(request):
     return render(request, "privacy.html")
 
