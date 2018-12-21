@@ -1518,7 +1518,10 @@ class AirPollutionNew(generics.CreateAPIView):
                 return JsonResponse(dict(
                     status=400,
                     message="Location Missing", payload={}))
-
+            if location == 1:
+                location = 283
+            else:
+                location = 284
             url = "http://www.envirotechlive.com/app/Actions/DataPullAPIAction.php"
             formDate = (datetime.datetime.now() -
                              datetime.timedelta(hours=1)).strftime("%d-%m-%Y %H:%M:%S")
@@ -1642,6 +1645,10 @@ class AirPollutionWeekNewGeneric(generics.CreateAPIView):
                 return JsonResponse(dict(
                     status=400,
                     message="Location Missing", payload={}))
+            if location == 1:
+                location = 283
+            else:
+                location = 284
             pm10_list, pm25_list = [], []
             for i in range(5):
                 url = "http://www.envirotechlive.com/app/Actions/DataPullAPIAction.php"
