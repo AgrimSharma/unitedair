@@ -1518,13 +1518,16 @@ class AirPollutionNew(generics.CreateAPIView):
                 return JsonResponse(dict(
                     status=400,
                     message="Location Missing", payload={}))
-            if location == 1:
+            if location == "1":
                 location = 283
             else:
                 location = 284
             url = "http://www.envirotechlive.com/app/Actions/DataPullAPIAction.php"
-            formDate = (datetime.datetime.now() -
-                             datetime.timedelta(hours=1)).strftime("%d-%m-%Y %H:%M:%S")
+            formDate = (
+                    datetime.datetime.now() -
+                    datetime.timedelta(hours=1)
+            ).strftime("%d-%m-%Y %H:%M:%S")
+
             querystring = {
                 "call": "GetStationData",
                 "fromDate": formDate,
@@ -1537,8 +1540,12 @@ class AirPollutionNew(generics.CreateAPIView):
 
             response = requests.request("POST", url, headers=headers,
                                         params=querystring)
-            pm10, pm25 = fetch_date(response.json())
-            images = AirQuality.objects.get(name=quality_return_pm10(
+            pm10_data, pm25_data = fetch_date(response.json())
+            pm10 = round(float(pm10_data), 2)
+            pm25 = round(float(pm25_data), 2)
+            print quality_return_pm10(
+                pm10)
+            images = AirQuality.objects.get(name__startswith=quality_return_pm10(
                 pm10).capitalize(), pm_type="PM10")
             health_precaution = [
                 dict(preference_text=e.display_text,
@@ -1552,18 +1559,16 @@ class AirPollutionNew(generics.CreateAPIView):
                 poll = AirPollutionCurrent.objects.get(
                     pollution_date=datetime.datetime.now().date(),
                     tower=tower)
-                if float(pm10) != poll.pm10 or float(
-                        pm25) != poll.pm25:
-                    poll.pm10 = round(float(pm10), 2)
-                    poll.pm25 = round(float(pm25), 2)
+                if pm10 != poll.pm10 or pm25 != poll.pm25:
+                    poll.pm10 = pm10
+                    poll.pm25 = pm25
                     response = {
                         "PM10":
                             dict(
                                 value=poll.pm10,
                                 color=color_return_pm10(
                                     poll.pm10),
-                                quality=quality_return_pm10(
-                                    poll.pm10)),
+                                quality=quality_return_pm10(poll.pm10)),
                         "PM25": dict(
                             value=poll.pm25,
                             color=color_return_pm25(
@@ -1620,7 +1625,7 @@ class AirPollutionNew(generics.CreateAPIView):
                 }
                 AirPollutionCurrent.objects.create(
                     pollution_date=datetime.datetime.now().date(),
-                    tower=tower, pm10=round(float(pm10,2)), pm25=round(float(pm25)))
+                    tower=tower, pm10=pm10, pm25=pm25)
             return JsonResponse(dict(status=200,
                                      message="success",
                                      payload=response
@@ -1645,7 +1650,7 @@ class AirPollutionWeekNewGeneric(generics.CreateAPIView):
                 return JsonResponse(dict(
                     status=400,
                     message="Location Missing", payload={}))
-            if location == 1:
+            if location == "1":
                 location = 283
             else:
                 location = 284
@@ -1668,8 +1673,8 @@ class AirPollutionWeekNewGeneric(generics.CreateAPIView):
                 response = requests.request("POST", url, headers=headers,
                                             params=querystring)
                 pm10, pm25 = fetch_date(response.json())
-                pm10 = round(float(pm10))
-                pm25 = round(float(pm25))
+                pm10 = int(pm10)
+                pm25 = int(pm25)
                 pm10_list.append(dict(
                     date=last_date.strftime("%d-%m-%Y"),
                     maximum=pm10,
