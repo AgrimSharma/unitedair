@@ -1554,7 +1554,7 @@ class AirPollutionNew(generics.CreateAPIView):
                 for e in images.extrafields_set.all()
             ]
             tower = Towers.objects.get(stationsSelect=location)
-            locations = Location.objects.all()
+            locations = Location.objects.all().order_by('name')
             try:
                 poll = AirPollutionCurrent.objects.get(
                     pollution_date=datetime.datetime.now().date(),
