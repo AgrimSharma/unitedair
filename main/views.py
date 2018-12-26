@@ -542,17 +542,17 @@ def quality_return_pm25(val):
     """
     val = float(val)
     if 0.0 <= val < 30.0:
-        return 'Good'.lower()
+        return 'Good'
     elif 31.0 <= val <= 60.0:
-        return 'Satisfactory'.lower()
+        return 'Satisfactory'
     elif 61.0 <= val <= 90.0:
-        return 'Moderately Polluted'.lower()
+        return 'Moderate'
     elif 91.0 <= val <= 120.0:
-        return 'Poor'.lower()
+        return 'Poor'
     elif 121.0 <= val <= 250.0:
-        return 'Very Poor'.lower()
+        return 'Very Poor'
     else:
-        return 'Severe'.lower()
+        return 'Severe'
 
 
 def quality_return_pm10(val):
@@ -562,17 +562,17 @@ def quality_return_pm10(val):
     """
     val = float(val)
     if 0.0 <= val < 50.0:
-        return 'Good'.lower()
+        return 'Good'
     elif 51.0 <= val <= 100.0:
-        return 'Satisfactory'.lower()
+        return 'Satisfactory'
     elif 101.0 <= val <= 250.0:
-        return 'Moderately Polluted'.lower()
+        return 'Moderate'
     elif 251.0 <= val <= 350.0:
-        return 'Poor'.lower()
+        return 'Poor'
     elif 351.0 <= val <= 430.0:
-        return 'Very Poor'.lower()
+        return 'Very Poor'
     else:
-        return 'Severe'.lower()
+        return 'Severe'
 
 
 def quality_color(quality):
@@ -592,10 +592,6 @@ def quality_color(quality):
     return response
 
 
-# def fetch_data(data):
-#     pm10_dict = data[0]
-#     pm25_dict = data[1]
-#     return pm10_dict, pm25_dict
 
 
 class EventGeneric(generics.CreateAPIView):
