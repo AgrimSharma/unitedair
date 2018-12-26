@@ -28,7 +28,7 @@ class Blog(models.Model):
     category = models.ForeignKey(to=BlogCategories, on_delete=models.CASCADE)
     heading = models.CharField(max_length=1000)
     description = models.TextField(max_length=2000)
-    blog_image = models.URLField()
+    blog_image = models.ImageField(upload_to="static/images/blog_details/")
     created_date = models.DateTimeField(auto_now=True)
 
     class Meta:

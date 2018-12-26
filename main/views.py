@@ -487,7 +487,7 @@ def blog_data(events, page_no):
                 id=e.id,
                 heading=e.heading,
                 description=e.description,
-                event_image=e.blog_image,
+                event_image="http://103.91.90.242:8000/{}".format(e.blog_image),
                 create_date=e.created_date.strftime("%d-%m-%Y"),
             )
         )
@@ -882,7 +882,7 @@ class BlogDetailGeneric(generics.CreateAPIView):
                                         category=blog_category.category.name,
                                         heading=blog_category.heading,
                                         description=blog_category.description,
-                                        event_image=blog_category.blog_image,
+                                        event_image="http://103.91.90.242:8000/{}".format(blog_category.blog_image),
                                         create_date=blog_category.created_date.strftime("%d-%m-%Y"),
                                                 )))
         else:
