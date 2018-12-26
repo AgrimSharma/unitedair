@@ -1274,7 +1274,7 @@ class BlogCategoryWebListGeneric(generics.CreateAPIView):
                         id=e.id,
                         heading=e.heading,
                         description=e.description,
-                        event_image=e.blog_image,
+                        event_image="http://103.91.90.242:8000/{}".format(e.blog_image),
                         create_date=e.created_date,
                     )
                 )
