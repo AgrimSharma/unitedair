@@ -803,7 +803,7 @@ class BlogCategoryGeneric(generics.CreateAPIView):
                     {
                         "id": e.id,
                         "name": e.name,
-                        "image": e.blog_image,
+                        "image": "http://103.91.90.242:8000/{}".format(e.blog_image),
                         "blog_count": blog.count(),
                         "color_code": e.color_code
                     }
