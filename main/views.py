@@ -1491,8 +1491,12 @@ class LocationGeneric(generics.CreateAPIView):
 
 def fetch_date(data):
     data = data['data']
-    pm10 = [float(x[0]) for x in data.values()]
-    pm25 = [float(x[1]) for x in data.values()]
+    try:
+        pm10 = [float(x[0]) for x in data.values()]
+        pm25 = [float(x[1]) for x in data.values()]
+    except Exception:
+        pm10 = [float(x[0]) for x in data]
+        pm25 = [float(x[1]) for x in data]
     return sum(pm10) / len(pm10), sum(pm25) / len(pm25)
 
 
