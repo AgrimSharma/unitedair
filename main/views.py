@@ -1529,7 +1529,7 @@ class AirPollutionNew(generics.CreateAPIView):
             url = "http://www.envirotechlive.com/app/Actions/DataPullAPIAction.php"
             formDate = (
                     datetime.datetime.now() -
-                    datetime.timedelta(hours=2)
+                    datetime.timedelta(hours=4)
             ).strftime("%d-%m-%Y %H:%M:%S")
 
             querystring = {"call": "GetStationData",
