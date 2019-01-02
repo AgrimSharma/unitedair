@@ -1503,6 +1503,26 @@ def fetch_date(data):
         return pm10, pm25
 
 
+def fetch_data_api(hour, location):
+    formDate = (
+            datetime.datetime.now() -
+            datetime.timedelta(hours=hour)
+    ).strftime("%d-%m-%Y %H:%M:%S")
+    url = "http://www.envirotechlive.com/app/Actions/DataPullAPIAction.php"
+
+    querystring = {"call": "GetStationData",
+                   "fromDate": formDate,
+                   "folderSeq": location}
+    headers = {
+        'authorization': "Basic ZW52aXJvdGVjaF9hcW1zcDpTeXN0ZW0jOTA4MTA=",
+        'content-type': "application/json",
+    }
+
+    response = requests.request("POST", url, headers=headers,
+                                params=querystring)
+    return response
+
+
 class AirPollutionNew(generics.CreateAPIView):
     queryset = AirPollution.objects.all()
     serializer_class = AirPollutionSerializer
@@ -1525,24 +1545,14 @@ class AirPollutionNew(generics.CreateAPIView):
                 location = 283
             else:
                 location = 284
-
-            url = "http://www.envirotechlive.com/app/Actions/DataPullAPIAction.php"
-            formDate = (
-                    datetime.datetime.now() -
-                    datetime.timedelta(hours=4)
-            ).strftime("%d-%m-%Y %H:%M:%S")
-
-            querystring = {"call": "GetStationData",
-                           "fromDate": formDate,
-                           "folderSeq": location}
-            headers = {
-                'authorization': "Basic ZW52aXJvdGVjaF9hcW1zcDpTeXN0ZW0jOTA4MTA=",
-                'content-type': "application/json",
-            }
-
-            response = requests.request("POST", url, headers=headers,
-                                        params=querystring)
-            print response.json()
+            hour = 2
+            response = fetch_data_api(hour, location)
+            if len(response.json().data) == 0:
+                hour = 3
+                response = fetch_data_api(hour, location)
+            else:
+                hour = 4
+                response = fetch_data_api(hour, location)
             pm10_data, pm25_data = fetch_date(response.json())
 
             pm10 = round(float(pm10_data), 2)
