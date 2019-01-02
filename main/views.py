@@ -1547,7 +1547,7 @@ class AirPollutionNew(generics.CreateAPIView):
                 location = 284
             hour = 2
             response = fetch_data_api(hour, location)
-            if len(response.json().data) == 0:
+            if len(response.json()['data']) == 0:
                 hour = 3
                 response = fetch_data_api(hour, location)
             else:
