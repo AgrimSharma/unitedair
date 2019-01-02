@@ -592,8 +592,6 @@ def quality_color(quality):
     return response
 
 
-
-
 class EventGeneric(generics.CreateAPIView):
     """
     Class for fetching all the upcoming and past events
@@ -1498,11 +1496,12 @@ def fetch_date(data):
         pm10 = [float(x[0]) for x in data]
         pm25 = [float(x[1]) for x in data]
     if len(pm10) > 0 and len(pm25) > 0:
-        return sum(pm10) / len(pm10), sum(pm25) / len(pm25)
+        return pm10[-1], pm25[-1]
     else:
         pm10 = random.randrange(250, 450)
         pm25 = random.randrange(250, 350)
         return pm10, pm25
+
 
 class AirPollutionNew(generics.CreateAPIView):
     queryset = AirPollution.objects.all()
@@ -1543,6 +1542,7 @@ class AirPollutionNew(generics.CreateAPIView):
 
             response = requests.request("POST", url, headers=headers,
                                         params=querystring)
+            print response.json()
             pm10_data, pm25_data = fetch_date(response.json())
 
             pm10 = round(float(pm10_data), 2)
