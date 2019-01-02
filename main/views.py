@@ -1020,13 +1020,13 @@ class AirPollutionGeneric(generics.CreateAPIView):
                         response = {
                             "PM10":
                                 dict(
-                                    value=poll.pm10,
+                                    value=math.ceil(poll.pm10),
                                     color=color_return_pm10(
                                         poll.pm10),
                                     quality=quality_return_pm10(
                                         poll.pm10)),
                             "PM25": dict(
-                                value=poll.pm25,
+                                value=math.ceil(poll.pm25),
                                 color=color_return_pm25(
                                     poll.pm25),
                                 quality=quality_return_pm25(
@@ -1041,13 +1041,13 @@ class AirPollutionGeneric(generics.CreateAPIView):
                         response = {
                                      "PM10":
                                          dict(
-                                            value=pm10_dict,
+                                            value=math.ceil(pm10_dict),
                                             color=color_return_pm10(
                                                 pm10_dict),
                                             quality=quality_return_pm10(
                                                 pm10_dict)),
                                      "PM25":dict(
-                                         value=pm25_dict,
+                                         value=math.ceil(pm25_dict),
                                          color=color_return_pm25(
                                              pm25_dict),
                                          quality=quality_return_pm25(
@@ -1062,13 +1062,13 @@ class AirPollutionGeneric(generics.CreateAPIView):
                     response = {
                         "PM10":
                             dict(
-                                value=pm10_dict,
+                                value=math.ceil(pm10_dict),
                                 color=color_return_pm10(
                                     pm10_dict),
                                 quality=quality_return_pm10(
                                     pm10_dict)),
                         "PM25": dict(
-                            value=pm25_dict,
+                            value=math.ceil(pm25_dict),
                             color=color_return_pm25(
                                 pm25_dict),
                             quality=quality_return_pm25(
@@ -1103,12 +1103,12 @@ class AirPollutionGeneric(generics.CreateAPIView):
                     response = {
                         "PM10":
                             dict(
-                                value=air_quality.pm10,
+                                value=math.ceil(air_quality.pm10),
                                 color=color_return_pm10(air_quality.pm10),
                                 quality=quality_return_pm10(
                                     air_quality.pm10)),
                         "PM25": dict(
-                            value=air_quality.pm25,
+                            value=math.ceil(air_quality.pm25),
                             color=color_return_pm25(
                                 air_quality.pm25),
                             quality=quality_return_pm25(
@@ -1137,12 +1137,12 @@ class AirPollutionGeneric(generics.CreateAPIView):
                     response = {
                         "PM10":
                             dict(
-                                value=pm_10,
+                                value=math.ceil(pm_10),
                                 color=color_return_pm10(pm_10),
                                 quality=quality_return_pm10(
                                     pm_10)),
                         "PM25": dict(
-                            value=pm_25,
+                            value=math.ceil(pm_25),
                             color=color_return_pm25(
                                 pm_25),
                             quality=quality_return_pm25(
@@ -1520,6 +1520,7 @@ def fetch_data_api(hour, location):
 
     response = requests.request("POST", url, headers=headers,
                                 params=querystring)
+    print response.json()
     return response
 
 
