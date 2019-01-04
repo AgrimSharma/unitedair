@@ -441,24 +441,39 @@ def event_data(events, page_no):
             for f in e.eventimage_set.all():
                 imgs.append("https://api.unitedforair.in/{}".
                                  format(f.display_image))
+            response.append(
+                dict(
+                    id=e.id,
+                    heading=e.heading,
+                    description=e.description,
+                    event_image=imgs,
+                    event_date=e.event_date.strftime("%d-%m-%Y"),
+                    event_time=e.event_time,
+                    event_address=e.event_address,
+                    latitude=e.latitude,
+                    longitude=e.longitude,
+                    event_location=e.location.name,
+                    event_location_id=e.location.id
+                )
+            )
 
         except Exception:
             imgs = []
-        response.append(
-            dict(
-                id=e.id,
-                heading=e.heading,
-                description=e.description,
-                event_image=imgs,
-                event_date=e.event_date.strftime("%d-%m-%Y"),
-                event_time=e.event_time,
-                event_address=e.event_address,
-                latitude=e.latitude,
-                longitude=e.longitude,
-                event_location=e.location.name,
-                event_location_id=e.location.id
+            response.append(
+                dict(
+                    id=e.id,
+                    heading=e.heading,
+                    description=e.description,
+                    event_image=imgs,
+                    event_date=e.event_date.strftime("%d-%m-%Y"),
+                    event_time=e.event_time,
+                    event_address=e.event_address,
+                    latitude=e.latitude,
+                    longitude=e.longitude,
+                    event_location=e.location.name,
+                    event_location_id=e.location.id
+                )
             )
-        )
 
     return response
 
