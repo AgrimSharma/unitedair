@@ -44,6 +44,7 @@ urlpatterns = [
     url(r'^privacy-policy', privacy_policy),
     url(r'^terms', terms_and_condition),
     url(r'^about_us', about_us),
+    url(r'^jigsaw', jigsaw),
 ]
 
 

@@ -1734,3 +1734,7 @@ def terms_and_condition(request):
 
 def about_us(request):
     return render(request, "about_us.html")
+
+
+def jigsaw(request):
+    return render(request, "jig.html")
