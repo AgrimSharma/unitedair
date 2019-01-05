@@ -7,7 +7,7 @@ from django.db import models
 class BlogCategories(models.Model):
     name = models.CharField(max_length=100)
     color_code = models.CharField(max_length=100, null=True, blank=True)
-    blog_image = models.ImageField(upload_to="static/images/blog/")
+    blog_image = models.ImageField(upload_to="media/images/blog/")
     created_date = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -28,7 +28,7 @@ class Blog(models.Model):
     category = models.ForeignKey(to=BlogCategories, on_delete=models.CASCADE)
     heading = models.CharField(max_length=1000)
     description = models.TextField(max_length=2000)
-    blog_image = models.ImageField(upload_to="static/images/blog_details/")
+    blog_image = models.ImageField(upload_to="media/images/blog_details/")
     created_date = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -299,7 +299,7 @@ class UserNotification(models.Model):
 
 
 class EventImage(models.Model):
-    display_image = models.ImageField(upload_to="static/images/events/")
+    display_image = models.ImageField(upload_to="media/images/events/")
     event = models.ForeignKey(to=Events, on_delete=models.CASCADE)
     created_date = models.DateField(auto_now=True)
 
