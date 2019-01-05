@@ -439,7 +439,7 @@ def event_data(events, page_no):
         try:
             imgs = []
             for f in e.eventimage_set.all():
-                imgs.append("https://api.unitedforair.in/{}".
+                imgs.append("https://api.unitedforair.in/media/{}".
                                  format(f.display_image))
             response.append(
                 dict(
@@ -502,7 +502,7 @@ def blog_data(events, page_no):
                 id=e.id,
                 heading=e.heading,
                 description=e.description,
-                event_image="https://api.unitedforair.in/{}".format(e.blog_image),
+                event_image="https://api.unitedforair.in/media/{}".format(e.blog_image),
                 create_date=e.created_date.strftime("%d-%m-%Y"),
             )
         )
@@ -735,7 +735,7 @@ class EventDetailGeneric(generics.CreateAPIView):
                 id=event.id,
                 heading=event.heading,
                 description=event.description,
-                event_image=["https://api.unitedforair.in/{}".
+                event_image=["https://api.unitedforair.in/media/{}".
                                  format(e.display_image) for e in event.eventimage_set.all()] if len(event.eventimage_set.all()) > 0 else [],
                 event_date=event.event_date.strftime("%d-%m-%Y"),
                 event_time=event.event_time,
@@ -812,7 +812,7 @@ class BlogCategoryGeneric(generics.CreateAPIView):
                     {
                         "id": e.id,
                         "name": e.name,
-                        "image": "https://api.unitedforair.in/{}".format(e.blog_image),
+                        "image": "https://api.unitedforair.in/media/media/{}".format(e.blog_image),
                         "blog_count": blog.count(),
                         "color_code": e.color_code
                     }
@@ -891,7 +891,7 @@ class BlogDetailGeneric(generics.CreateAPIView):
                                         category=blog_category.category.name,
                                         heading=blog_category.heading,
                                         description=blog_category.description,
-                                        event_image="https://api.unitedforair.in/{}".format(blog_category.blog_image),
+                                        event_image="https://api.unitedforair.in/media/{}".format(blog_category.blog_image),
                                         create_date=blog_category.created_date.strftime("%d-%m-%Y"),
                                                 )))
         else:
@@ -1283,7 +1283,7 @@ class BlogCategoryWebListGeneric(generics.CreateAPIView):
                         id=e.id,
                         heading=e.heading,
                         description=e.description,
-                        event_image="https://api.unitedforair.in/{}".format(e.blog_image),
+                        event_image="https://api.unitedforair.in/media/{}".format(e.blog_image),
                         create_date=e.created_date,
                     )
                 )
