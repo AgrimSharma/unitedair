@@ -7,7 +7,7 @@ from django.db import models
 class BlogCategories(models.Model):
     name = models.CharField(max_length=100)
     color_code = models.CharField(max_length=100, null=True, blank=True)
-    blog_image = models.ImageField(upload_to="images/blog/")
+    blog_image = models.ImageField(upload_to="media/images/blog/")
     created_date = models.DateTimeField(auto_now=True)
 
     class Meta:
