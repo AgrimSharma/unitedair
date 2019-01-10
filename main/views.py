@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import random
+from django.core.mail import send_mail, EmailMessage
+from django.conf import settings
 from django.shortcuts import render
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from pyfcm import FCMNotification
 from .serailizers import *
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from rest_framework.viewsets import generics
 import datetime
 from django.conf import settings
@@ -1322,6 +1325,15 @@ class UserSubscribeGeneric(generics.CreateAPIView):
                     status = 200
                 except Exception:
                     blog_category = UserSubscribe.objects.create(email=email)
+                    from django.core.mail import EmailMultiAlternatives
+
+                    html_content = render_to_string("thankyou.html")
+                    text_content = strip_tags(html_content)
+                    msg = EmailMultiAlternatives('UnitedforAir', text_content,
+                                                 'no-replyr@unitedforair.in',
+                                                 [email])
+                    msg.attach_alternative(html_content, "text/html")
+                    msg.send()
                     message = "Subscribed"
                     status = 200
             else:
@@ -1737,6 +1749,11 @@ class AirPollutionWeekNewGeneric(generics.CreateAPIView):
         else:
             return JsonResponse(dict(
                 status=400, message="Key missing", payload={}))
+
+
+def mailer(request):
+
+    return HttpResponse("Success")
 
 
 def privacy_policy(request):
