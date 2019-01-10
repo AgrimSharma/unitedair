@@ -1252,7 +1252,7 @@ class RegistrationGeneric(generics.CreateAPIView):
                 html_content = render_to_string("thankyou.html")
                 text_content = strip_tags(html_content)
                 msg = EmailMultiAlternatives('UnitedforAir', text_content,
-                                             settings.EMAIL_HOST_USER,
+                                             "no-reply@unitedforair.in",
                                              [email])
                 msg.attach_alternative(html_content, "text/html")
                 msg.send()
