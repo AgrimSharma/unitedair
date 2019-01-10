@@ -1249,6 +1249,13 @@ class RegistrationGeneric(generics.CreateAPIView):
             except Exception:
                 device = Registration.objects.create(
                     email=email, name=name, phone=phone, device_id=device_id)
+                html_content = render_to_string("thankyou.html")
+                text_content = strip_tags(html_content)
+                msg = EmailMultiAlternatives('UnitedforAir', text_content,
+                                             settings.EMAIL_HOST_USER,
+                                             [email])
+                msg.attach_alternative(html_content, "text/html")
+                msg.send()
                 return JsonResponse(dict(
                     status=200, message="User Registered", payload={}))
         else:
@@ -1326,7 +1333,6 @@ class UserSubscribeGeneric(generics.CreateAPIView):
                     message = "Already Subscribed"
                     status = 200
                 except Exception:
-                    import pdb;pdb.set_trace()
                     blog_category = UserSubscribe.objects.create(email=email)
 
                     html_content = render_to_string("thankyou.html")
