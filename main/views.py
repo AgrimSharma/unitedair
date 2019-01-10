@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
+
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -1324,13 +1326,13 @@ class UserSubscribeGeneric(generics.CreateAPIView):
                     message = "Already Subscribed"
                     status = 200
                 except Exception:
+                    import pdb;pdb.set_trace()
                     blog_category = UserSubscribe.objects.create(email=email)
-                    from django.core.mail import EmailMultiAlternatives
 
                     html_content = render_to_string("thankyou.html")
                     text_content = strip_tags(html_content)
                     msg = EmailMultiAlternatives('UnitedforAir', text_content,
-                                                 'no-replyr@unitedforair.in',
+                                                 settings.EMAIL_HOST_USER,
                                                  [email])
                     msg.attach_alternative(html_content, "text/html")
                     msg.send()
